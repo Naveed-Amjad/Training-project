@@ -1,0 +1,14 @@
+.card_img {
+    height: 222px;
+    width: 257px;
+    /* border: 1px solid red; */
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.card_btn {
+    height: 36px !important;
+    width: 76px !important;
+    /* border: 1px solid red; */
+    margin-left: 170px;
+}

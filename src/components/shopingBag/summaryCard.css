@@ -1,0 +1,19 @@
+.summary_card {
+    width: 395px;
+    height: 250px;
+    margin-top: 10px;
+    /* border: 1px solid red; */
+    border: 1px solid var(--components-bradcrumb-fill, #E9ECEF);
+    background: var(--global-09-white, #FFF);
+    /* display: flex;
+    justify-content: space-between; */
+}
+
+.summaryCard_item {
+    height: 30px;
+    width: 350px;
+    /* border: 1px solid red; */
+    margin: 10px 0px 0px 20px;
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,0 +1,57 @@
+.background {
+width: 608px;
+height: 455px;
+border: 1px solid var(--components-bradcrumb-fill, #E9ECEF);
+background: var(--global-09-white, #FFF);
+margin: 100px 379px 210px 379px;
+}
+.heading{
+    width: 300px;
+    height: 50px;
+    text-align: center;
+    margin: 5px 0px 25px 172px;
+    /* font-family: Inter;
+    font-size: 32px; */
+    /* font-style: normal; */
+    font-weight: 300;
+    line-height: 38px;
+    color: var(--global-01-primary, #007BFF);
+}
+.input_container{
+    width: 544px;
+    height: 91px;
+    border-radius: 4px;
+    margin: 12px 32px 24px 32px;
+
+}
+.checkbox{
+    margin: 0px 0px 0px 32px;
+}
+
+.input_field{
+    border-radius: 4px;
+    border: 1px solid var(--components-forms-input-border, #CED4DA);
+    background: var(--global-09-white, #FFF);
+}
+.btn{
+    width: 544px;
+    text-align: center;
+    /* font-family: Inter; */
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+/* line-height: 24px; */
+}
+
+.Reminder {
+    width: 500px;
+    height: 50px;
+    /* margin: 0px 0px -20px 150px */
+    margin-left: 150px;
+    margin-top: 25px;
+    /* border: 1px solid red; */
+}
+
+.Reminder a {
+    text-decoration: none;
+}

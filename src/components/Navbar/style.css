@@ -1,0 +1,28 @@
+.background {
+    width: auto;
+    height: 48px;
+    border: 1px solid red;
+    background: var(--global-09-white, #FFF);
+
+}
+
+.title {
+    border: 1px solid red;
+    margin: 22px 0px 12px 60px;
+    color: var(--global-08-dark, #343A40);
+    /* Body/Paragraph + Bold */
+    /* font-family: Inter; */
+    font-size: 16px;
+    font-weight: 700;
+    background-color: blue;
+}
+
+.image {
+    background: url('/Users/qbatch/Downloads/naveed.jpg'), lightgray 50% / cover no-repeat;
+}
+
+.image-style {
+    width: 46px;
+    height: 31px;
+    background: lightgray 50% / cover no-repeat;
+}

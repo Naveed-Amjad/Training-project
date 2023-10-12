@@ -1,0 +1,13 @@
+.add_payment {
+    height: 18px auto;
+    width: 395px;
+    /* border: 1px solid red; */
+    margin-top: 30px;
+}
+
+.add_new_div {
+    height: 108px auto;
+    width: 395px;
+    border: 1px solid #E9ECEF;
+    margin-top: 30px;
+}
