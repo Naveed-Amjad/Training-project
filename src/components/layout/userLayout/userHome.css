@@ -102,7 +102,7 @@
 .carousel {
     height: 72px;
     width: 312px;
-    border: 1px solid red;
+    /* border: 1px solid red; */
     margin: 20px 0px 0px 10px;
 }
 

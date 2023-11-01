@@ -17,7 +17,9 @@ import Dashboard from './components/dashboard';
 import Signup from './container/auth/Signup';
 import NewPassword from './container/auth/NewPassword';
 import ForgotPassword from './container/auth/ForgotPassword';
+// import ResetPassword from './container/auth/ResetPassword';
 import ShopingBag from './components/shopingBag/ShopingBag';
+import PageNotFound from './components/utils/PageNotFound';
 // import CustomNavbar from './components/Navbar';
 // import CustomSideBar from './components/sidebar';
 // import Rectangle from './components/Rectangle';
@@ -29,73 +31,61 @@ import ShopingBag from './components/shopingBag/ShopingBag';
 // Style imports
 
 import './App.css';
+import { useSelector } from 'react-redux';
 // import { useSelector } from 'react-redux';
 
 function App() {
   console.log('App is rendering');
-  // console.log('token value in App.js ', localStorage.getItem('token'));
-  // const token = useSelector((state) => state.authReducer.token);
+  const { token, role } = useSelector((state) => state.authReducer);
   return (
     <BrowserRouter>
-      {/* {console.log(window.location.pathname)} */}
-      {localStorage.getItem('token') ? ( // Admin logged in
-        <AdminLayout>
-          <Routes>
-            <Route path='/' element={<Dashboard/>}/>
-            <Route path="/dashboard" index element={<Dashboard />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/orders" element={<Orders />} />
-          </Routes>
-        </AdminLayout>
-      ) : localStorage.getItem('user') ? (
+      {token && role === 'admin' ? ( // Admin logged in
+        <Routes>
+          <Route path="/" element={<AdminLayout><Dashboard /></AdminLayout>} />
+          <Route path="/dashboard" index element={<AdminLayout><Dashboard /></AdminLayout>} />
+          <Route path="/products" element={<AdminLayout><Products /></AdminLayout>} />
+          <Route path="/orders" element={<AdminLayout><Orders /></AdminLayout>} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      ) : token && role === 'user' ? (
         <>
-          <UserLayout>
-            <Routes>
-              <Route path="/" element={<UserHome />} />
-              <Route
-                path="/shopingbag"
-                element={<ShopingBag heading="Shoping Bag" url="shopingbag" />}
-              />
-              <Route
-                path="/checkout"
-                element={<ShopingBag heading="Checkout" url="checkout" />}
-              />
-            </Routes>
-          </UserLayout>
+
+          <Routes>
+            <Route path="/" element={<UserLayout><UserHome /></UserLayout>} />
+            <Route path="/userhome" index element={<UserLayout><UserHome /></UserLayout>} />
+            <Route path="/login" exact element={<UserLayout><Login /></UserLayout>} />
+            <Route
+              path="/shopingbag"
+              exact
+              element={<UserLayout><ShopingBag heading="Shoping Bag" url="shopingbag" /></UserLayout>}
+            />
+            <Route
+              path="/checkout"
+              element={<UserLayout><ShopingBag heading="Checkout" url="checkout" /></UserLayout>}
+            />
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
         </>
       ) : (
-      // No on is logged in
-
+        // No one is logged in
         <>
-          {/* {showNavbar && */}
-          <UserLayout>
-            <Routes>
-              <Route path="/" element={<UserHome />} />
-              <Route path="/login" element={<Login heading="Login" />} />
-              <Route path="signup" element={<Signup />} />
-              <Route path="reset" element={<NewPassword />} />
-              <Route path="forgotpassword" element={<ForgotPassword />} />
-            </Routes>
-          </UserLayout>
-          {/* } */}
-          {/* <Routes>
-                <Route path='/login' element={<Login />} />
-              </Routes> */}
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <UserLayout>
+                  <UserHome />
+                </UserLayout>
+              }
+            />
+            <Route path="/login" element={<Login heading="Login" />} />
+            <Route path="signup" element={<Signup />} />
+            <Route path="reset" element={<NewPassword />} />
+            <Route path="forgotpassword" element={<ForgotPassword />} />
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
         </>
-        /* <Route path='/' element={<h1>Hello its client main page</h1>} />
-                    <Route path='/login' element={<Login heading="Login" />} />
-                    <Route path='/reset' element={<ForgotPassword />} /> */
       )}
-      {/* <Login heading="Login"/> */}
-      {/* <ForgotPassword heading="Forgot Password"/> */}
-      {/* <NewPassword heading="New Password"/> */}
-      {/* <Signup heading="SignUp"/> */}
-      {/* <CustomNavbar /> */}
-      {/* <CustomSideBar /> */}
-      {/* <Rectangle /> */}
-      {/* <AgGrid /> */}
-      {/* <AdminLayout /> */}
-      {/* <CustomTable /> */}
     </BrowserRouter>
   );
 }

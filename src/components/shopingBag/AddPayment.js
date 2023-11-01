@@ -1,72 +1,107 @@
 // library imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 // component imports
 import CustomButton from '../button';
 import PlusSign from '../../assets/PlusSign.svg';
 import PaymentMethodModel from './PaymentMethodModel';
 import PaymentCard from '../paymentCard';
 import MasterCard from '../../assets/Group.svg';
+import OrderPlaced from '../utils/OrderPlaced';
+// Redux imports
+import { PlaceOrder } from '../../redux/slices/orderSlice';
+import { clearCart } from '../../redux/slices/cartSlice';
 // style imports
 import './addpayment.css';
-
 //
-const AddPayment = ({ isEnabledbtn }) => {
+const AddPayment = () => {
   const [paymentModel, setPaymentModel] = useState(false);
   const [showPaymentCard, setShowPaymentCard] = useState(false);
-  // const [isDisabled, setIsDisabled] = useState(true);
-  // console.log('showPaymentCard = ', showPaymentCard);
-  // console.log('isdisabled = ', isDisabled);
-  // console.log('setIsDisabled in addPayment ', setIsDisabled);
-  // console.log(paymentModel);
+  // const [paymentDetails, setPaymentDetails] = useState({});
+  const [showOrderPlacedModel, setShowOrderPlacedModel] = useState(false);
+  const userId = localStorage.getItem('id');
+  const userName = localStorage.getItem('name');
+  const { items, totalPrice, totalQuantity, address } = useSelector((state) => state.cartReducer)
+  const { success, error } = useSelector((state) => state.orderReducer);
+  const { paymentDetails } = useSelector((state) => state.cartReducer)
+
+  const dispatch = useDispatch();
   const handleClose = () => {
     setPaymentModel(false);
   };
+  console.log('ADDRESS = ', address);
   //
   const handleCardShow = () => {
     setShowPaymentCard(true);
   };
-  const [color, setColor] = useState();
-  // console.log('color', color);
+  const handleorder = () => {
+    dispatch(PlaceOrder({ items, userId, userName, totalAmount: totalPrice, totalQuantity, shippingAddress: address }));
+  }
+
+  useEffect(() => {
+    if (success && !error) {
+      dispatch(clearCart());
+    }
+  }, [success, error]);
+
   return (
     <div className="add_payment">
-      <span style={{ fontSize: '20px' }}>Select Payment Method</span>
+      {items?.length ? <span style={{ fontSize: '20px' }}>Select Payment Method</span> : ''}
       <div className="add_new_div">
-        {showPaymentCard ? (
+        {(items?.length && paymentDetails?.cardNumber) ? (
           <PaymentCard
             image={MasterCard}
             cardTitle="Master Card"
-            cardNumber="7562"
-            cardName="Naveed Amjad"
+            paymentDetails={paymentDetails}
           />
         ) : (
-          <CustomButton
-            onclick={() => {
-              setColor('red');
+          !address?.fullName ? <CustomButton
+            onClick={() => {
               setPaymentModel(true);
             }}
             style={{
               height: '50px',
-              width: '119px',
+              width: '199px',
               margin: '20px 0px 20px 40px',
               backgroundColor: 'white',
-              color: color ? 'red' : '#868E96',
+              color: '#868E96',
               border: '',
             }}
-            isEnabledbtn={isEnabledbtn}
+            isEnabledbtn={true}
             placeholder={
               <span>
                 <img style={{ marginRight: '5px' }} src={PlusSign} />
-                Add New
+                Add Payment
               </span>
             }
           />
-        )}
+
+            : (items?.length ? <CustomButton
+              onClick={() => {
+                setPaymentModel(true);
+              }}
+              style={{
+                height: '50px',
+                width: '199px',
+                margin: '20px 0px 20px 40px',
+                backgroundColor: 'white',
+                color: address ? '#007BFF' : '#868E96',
+                border: '',
+              }}
+              isEnabledbtn={false}
+              placeholder={
+                <span>
+                  <img style={{ marginRight: '5px' }} src={PlusSign} />
+                  Add Payment
+                </span>
+              }
+            /> : ''))}
         {paymentModel && (
-          <PaymentMethodModel onClose={handleClose} onclick={handleCardShow} />
+          <PaymentMethodModel onClose={handleClose} onClick={handleCardShow} />
         )}
       </div>
       <div>
-        <CustomButton
+        {!paymentDetails?.cardNumber ? <CustomButton
           style={{
             height: '46px',
             width: '396px',
@@ -75,9 +110,31 @@ const AddPayment = ({ isEnabledbtn }) => {
             color: '#6C757D',
             border: 'none',
           }}
+          isEnabledbtn={true}
           placeholder="Place Order"
+          onClick={() => {
+            setShowOrderPlacedModel(true);
+            handleorder();
+          }}
         />
+          : (items?.length ? <CustomButton
+            style={{
+              height: '46px',
+              width: '396px',
+              margin: '20px 0px 0px 0px',
+              backgroundColor: '#007BFF',
+              color: 'white',
+              border: 'none',
+            }}
+            isEnabledbtn={false}
+            placeholder="Place Order"
+            onClick={() => {
+              setShowOrderPlacedModel(true);
+              handleorder();
+            }}
+          /> : '')}
       </div>
+      {showOrderPlacedModel && <OrderPlaced />}
     </div>
   );
 };

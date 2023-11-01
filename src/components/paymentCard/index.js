@@ -1,12 +1,14 @@
 // library imports
-
+import { useSelector } from 'react-redux';
 // component imports
 import EditPencil from '../../assets/EditPencil.svg';
 
 // style imports
 import './style.css'
 //
-const PaymentCard = ({ image, cardTitle, cardNumber, cardName }) => {
+const PaymentCard = ({ image, cardTitle, paymentDetails }) => {
+  const userName = useSelector((state) => state.cartReducer.address);
+  const cardLastFourDigit = paymentDetails.cardNumber.slice(-4);
   return (
     <div className='payment_card_div'>
       <div className='payment_card'>
@@ -17,14 +19,14 @@ const PaymentCard = ({ image, cardTitle, cardNumber, cardName }) => {
           <div style={{ margin: '14px 0px 0px 20px' }}>****</div>
           <div style={{ margin: '14px 0px 0px 50px' }}>****</div>
           <div style={{ margin: '14px 0px 0px 40px' }}>****</div>
-          <div style={{ margin: '14px 0px 0px 40px' }}>{cardNumber}</div>
+          <div style={{ margin: '14px 0px 0px 40px' }}>{cardLastFourDigit}</div>
         </div>
         <div className='d-flex'>
-          <div style={{ margin: '10px 0px 0px 20px' }}>06/22</div>
-          <div style={{ margin: '10px 0px 0px 50px' }}>04/23</div>
+          <div style={{ margin: '10px 0px 0px 20px' }}>{paymentDetails.expiryDate}</div>
+          <div style={{ margin: '10px 0px 0px 50px' }}>{paymentDetails.expiryDate}</div>
         </div>
         <div style={{ margin: '10px 0px 0px 20px' }}>
-          {cardName}
+          {userName?.fullName}
         </div>
       </div>
       <div className='edit_button'>

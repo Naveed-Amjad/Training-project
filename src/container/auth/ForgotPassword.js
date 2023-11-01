@@ -1,12 +1,13 @@
 // library imports
-import { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 // components imports
 import Input from '../../components/input';
-import Button from '../../components/button'
+import Button from '../../components/button';
 import { Form } from 'react-bootstrap';
 // redux imports
-
+import { forgotPassword } from '../../redux/slices/authSlice';
 // style imports
 import './style.css';
 
@@ -23,25 +24,50 @@ const ForgotPassword = ({ heading }) => {
       setError(false);
     }
     setEmail(event.target.value);
-  }
-  console.log(email);
+  };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    dispatch(forgotPassword({ email }));
+  };
   return (
-        <>
-        <div className='background'>
-            <div className='heading'>
-            <h3>{heading}</h3>
-            </div>
-            <div className='input_container'>
-                <Input className="input_field" type="email" placeholder="Please enter your Email" lable="Enter email address" id="email" text="Enter a valid email address" onChange={emailChangeHandler}/>
-                {error && <Form.Text style={{ color: 'red' }}>{error}</Form.Text>}
-            {/* {error && <Form.Text style={{ color: 'red' }}>{error}</Form.Text>} */}
-            </div>
-            <div className='input_container'>
-                <Button className="btn" type="primary" id="btn" size="lg" placeholder="Forgot Password"/>
-                <p className='Reminder'>No, I remember my password <Link to='/'>Login</Link></p>
-          </div>
+    <>
+      <div className="background">
+        <div className="heading">
+          <h3>{heading}</h3>
+        </div>
+        <div className="input_container">
+          <Input
+            className="input_field"
+            type="email"
+            placeholder="Please enter your Email"
+            lable="Enter email address"
+            id="email"
+            text="Enter a valid email address"
+            onChange={emailChangeHandler}
+          />
+          {error && <Form.Text style={{ color: 'red' }}>{error}</Form.Text>}
+          {/* {error && <Form.Text style={{ color: 'red' }}>{error}</Form.Text>} */}
+        </div>
+        <div className="input_container">
+          <Button
+            onClick={() => {
+              handleSubmit();
+              navigate('/login');
+            }}
+            className="btn"
+            type="primary"
+            id="btn"
+            size="lg"
+            placeholder="Forgot Password"
+          />
+          <p className="Reminder">
+            No, I remember my password <Link to="/">Login</Link>
+          </p>
+        </div>
       </div>
-        </>
-  )
-}
+    </>
+  );
+};
 export default ForgotPassword;

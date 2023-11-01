@@ -6,12 +6,14 @@ import Modal from 'react-bootstrap/Modal';
 import Delete from '../../assets/ExclamationTriangle.svg';
 
 // redux imports
-import { deleteProduct } from '../../redux/slices/productsSlice';
+import { deleteProduct, getProducts } from '../../redux/slices/productsSlice';
+import { removeItems } from '../../redux/slices/cartSlice';
 // style imports
 import './deleteProduct.css';
 
-const DeleteProduct = ({ id, onClose, onDelete }) => {
-  console.log('id', id);
+const DeleteProduct = ({ id, onClose, onDelete, item }) => {
+  console.log('🚀 ~ file: deleteProduct.js:15 ~ DeleteProduct ~ item id:', item?.product?._id)
+  // console.log('id', id);
   const dispatch = useDispatch();
   const handleClose = () => {
     onClose();
@@ -52,7 +54,7 @@ const DeleteProduct = ({ id, onClose, onDelete }) => {
               variant="primary"
               onClick={() => {
                 onDelete(id);
-                dispatch(deleteProduct(id));
+                id ? dispatch(deleteProduct(id)).then(() => dispatch(getProducts())) : dispatch(removeItems(item));
               }}
             >
               Delete

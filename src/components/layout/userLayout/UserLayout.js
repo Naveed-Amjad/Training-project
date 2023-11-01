@@ -4,7 +4,7 @@ const UserLayout = ({ children }) => {
   // console.log(path);
   return (
     <>
-      {(<div style={{ height: '60px' }}><CustomNavbar /></div>)}
+      <div style={{ height: '60px' }}><CustomNavbar /></div>
       <div>
         {children}
       </div>

@@ -6,59 +6,33 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Spin } from 'antd';
 // component imports
-// import Arrow from '../../assets/Arrow.svg'
-// import Button from '../../components/button'
 import CustomTable from '../../components/Table';
 import { Button } from 'react-bootstrap';
 import EditProduct from './editProduct';
 // Redux imports
 import { getProducts } from '../../redux/slices/productsSlice';
+// style imports
+
 const Products = () => {
   const [addModel, setAddModel] = useState(false);
-  // states
-  // const [data, setData] = useState([]);
-  // const [error, setError] = useState(false);
-  // const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
-  // pagination states
-  // function to get data from the API
-  // const getData = () => {
-  //   console.log('getData runs');
-  //   dispatch(getProducts());
-  // try {
-  //   const res = await axios.get('https://dummyjson.com/products')
-  //   console.log(res)
-  //   setData(res.data.products);
-  // } catch (error) {
-  //   setError(true);
-  //   console.log(`Error ${error}`);
-  // } finally {
-  //   setIsLoading(false);
-  // }
-  // }
+  const data = useSelector((state) => state.productsReducer?.products);
+  //
   useEffect(() => {
-    console.log('useEffect runs');
     dispatch(getProducts());
-    // getData();
   }, []);
-  // geting values from Redux store
+
   const { isLoading } = useSelector((state) => state.productsReducer);
   const { error } = useSelector((state) => state.productsReducer);
-  const data = useSelector((state) => state.productsReducer.products);
-  console.log({ data });
-  // // Pagination
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const totalPages = Math.ceil((data?.length || 0) / itemsPerPage);
-  console.log(data);
   const displayedProducts = data?.slice(startIndex, endIndex);
   const numbers = [...Array(totalPages + 1).keys()]?.slice(1);
-
-  // console.log(displayedProducts)
-
   // table component headings
   const heading = [
     { Text: 'Title', hasArrow: true },
@@ -108,12 +82,10 @@ const Products = () => {
                   />
                 )}
               </div>
-              {/* <div style={{ marginLeft: '190px', marginTop: '10px' }}>Add New</div> */}
             </div>
           </div>
-          {console.log('isLoading value ', isLoading)}
           {isLoading ? (
-            <h1> Data is Loading Please wait... </h1>
+            <div style={{ marginLeft: '200px 0px 0px 300px' }}> <Spin size="large" /> </div>
           ) : (
             <CustomTable
               tableHeading={heading}
@@ -125,7 +97,7 @@ const Products = () => {
             aria-label="Page navigation example"
             style={{ marginLeft: '430px' }}
           >
-            <ul className="pagination">
+            {!isLoading && <ul className="pagination">
               <li className="page-item">
                 <a
                   className={`page-link ${currentPage === 1 ? 'disabled' : ''}`}
@@ -137,9 +109,8 @@ const Products = () => {
               </li>
               {numbers?.map((item, index) => (
                 <li
-                  className={`page-item ${
-                    currentPage === item ? 'active' : ''
-                  }`}
+                  className={`page-item ${currentPage === item ? 'active' : ''
+                    }`}
                   key={index}
                 >
                   <a className="page-link">{item}</a>
@@ -147,15 +118,14 @@ const Products = () => {
               ))}
               <li className="page-item">
                 <a
-                  className={`page-link ${
-                    endIndex >= data?.length ? 'disabled' : ''
-                  }`}
+                  className={`page-link ${endIndex >= data?.length ? 'disabled' : ''
+                    }`}
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >
                   Next
                 </a>
               </li>
-            </ul>
+            </ul>}
           </nav>
         </div>
       </div>

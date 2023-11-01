@@ -14,14 +14,16 @@
     "react/react-in-jsx-scope": 0,
     "react/prop-types": 0,
     "space-before-function-paren": [
-      "always",
+      "off",
       {
         "anonymous": "never",
         "named": "never",
         "asyncArrow": "never"
       }
     ],
+    "eslint-disable-next-line": "off",
     "multiline-ternary": "off",
-    "comma-dangle": "off"
+    "comma-dangle": "off",
+    "no-unused-vars": "off"
   }
 }

@@ -1,26 +1,22 @@
 // Library imports
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// component imports
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../../redux/slices/authSlice';
+// component imports
 import Input from '../../components/input';
 import Button from '../../components/button';
 import CustomFormText from '../../components/utils/formText';
-// import PopUp from '../../components/popup'
-// import NewPassword from './NewPassword';
 // Redux imports
-
+import { loginUser } from '../../redux/slices/authSlice';
 // Style imports
-import { Form } from 'react-bootstrap';
 import './style.css';
 
-const Login = ({ heading, changeState }) => {
+const Login = ({ heading }) => {
   // var textMsg = 'Please Enter User Name';
   const navigate = useNavigate();
   const [textMsg, setTextMsg] = useState('');
   const [email, setEmail] = useState();
-  const [userName, setUserName] = useState(null);
+  // const [userName, setUserName] = useState(null);
   const [error, setError] = useState(null);
   const wrongPassword = useSelector((state) => state.authReducer.error)
   console.log('wrongPassword ', wrongPassword);
@@ -30,7 +26,6 @@ const Login = ({ heading, changeState }) => {
   const isValidEmail = (e) => emailRegex.test(e);
   const emailChangeHandler = (event) => {
     if (!isValidEmail(event.target.value)) {
-      console.log(error);
       setError('Invalid Email');
     } else {
       setError(false);
@@ -41,21 +36,22 @@ const Login = ({ heading, changeState }) => {
   const passwordChangeHandler = (event) => {
     setPassword(event.target.value);
   };
-  const userNameHandler = (e) => {
-    console.log(userName);
-    console.log(email);
-    console.log(password);
-    setUserName(e.target.value);
-  };
+  // const userNameHandler = (e) => {
+  //   // console.log(userName);
+  //   // console.log(email);
+  //   // console.log(password);
+  //   setUserName(e.target.value);
+  // };
   // login handler, dispatch request to lohin user
   // var textMsg = '';
   const dispatch = useDispatch();
-  const loginHandler = async() => {
-    console.log('userName ', userName);
-    if (!userName) {
-      // textMsg = 'please Enter User Name'
-      setTextMsg('Please enter user name');
-    } else if (!email) {
+  const loginHandler = async () => {
+    // console.log('userName ', userName);
+    // if (!userName) {
+    //   // textMsg = 'please Enter User Name'
+    //   setTextMsg('Please enter user name');
+    // }
+    if (!email) {
       setTextMsg('Please enter email')
     } else if (!password) {
       setTextMsg('Please enter password')
@@ -63,9 +59,10 @@ const Login = ({ heading, changeState }) => {
       const resp = await dispatch(loginUser({ email, password }));
       console.log({ resp });
       if (!resp.error) {
-        navigate('/dashboard');
+        navigate('/dashboard')
+        localStorage.getItem('role') === 'admin' ? navigate('/dashboard') : navigate('/userhome')
       }
-      console.log('Login request is initiated: ', { email, password });
+      // console.log('Login request is initiated: ', { email, password });
     }
   };
 
@@ -76,7 +73,7 @@ const Login = ({ heading, changeState }) => {
         <div className="heading">
           <h1>{heading}</h1>
         </div>
-        <div className="input_container">
+        {/* <div className="input_container">
           <Input
             className="input_filed"
             type="text"
@@ -86,7 +83,7 @@ const Login = ({ heading, changeState }) => {
             onChange={userNameHandler}
           />
           {!userName && <CustomFormText textMsg={textMsg} />}
-        </div>
+        </div> */}
         <div className="input_container">
           <Input
             className="input_field"
@@ -111,12 +108,12 @@ const Login = ({ heading, changeState }) => {
           {wrongPassword && <CustomFormText textMsg='Wrong password' />}
           {!password && <CustomFormText textMsg={textMsg} />}
         </div>
-        <Form.Check
+        {/* <Form.Check
           className="checkbox"
           type="checkbox"
           label="Remember me"
           id="disabled-default-checkbox"
-        />
+        /> */}
         <div className="input_container">
           <Button
             className="btn"
@@ -124,10 +121,11 @@ const Login = ({ heading, changeState }) => {
             id="btn"
             size="lg"
             placeholder="Login"
-            onclick={loginHandler}
+            onClick={loginHandler}
           />
           <p className="Reminder">
-            Forgot Password! <Link to="/reset">Reset</Link>
+            Forgot Password! <Link to="/forgotpassword">Reset</Link> <br></br>
+            Do not Have Account! <Link to="/signup">Signup</Link>
           </p>
         </div>
       </div>

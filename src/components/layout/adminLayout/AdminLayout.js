@@ -7,23 +7,26 @@ import CustomSideBar from '../../sidebar';
 import './style.css'
 const AdminLayout = ({ children }) => {
   return (
-        <>
-            <CustomNavbar />
-            <div style={{ paddingTop: '62px' }} className='d-flex'>
-                <CustomSideBar />
-                <div style={{ marginLeft: '40px' }}>
-                {/* <div className='add_product'>
+    <>
+      {
+        console.log('Entered in admin layout')
+      }
+      <CustomNavbar />
+      <div style={{ paddingTop: '62px' }} className='d-flex'>
+        <CustomSideBar />
+        <div style={{ marginLeft: '40px' }}>
+          {/* <div className='add_product'>
                     <div>Products</div>
                     <div className='d-flex jus'>
                         <div>Import Bulk Producst</div>
                         <div>Add New</div>
                     </div>
                 </div> */}
-                    {children}
-                </div>
-            </div>
+          {children}
+        </div>
+      </div>
 
-        </>
+    </>
   );
 }
 

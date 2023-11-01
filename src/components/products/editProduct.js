@@ -1,14 +1,13 @@
 // library imports
-// import { useState } from 'react';
-// component imports
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+// component imports
 // import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Input from '../input/index';
 import CustomButton from '../../components/button';
 // Redux imports
-import { addProduct } from '../../redux/slices/productsSlice';
+import { addProduct, getProducts, UpdateProduct } from '../../redux/slices/productsSlice';
 // style imports
 import ArrowLeft from '../../assets/ArrowLeft.svg';
 import CloudArrow from '../../assets/CloudArrow.svg';
@@ -19,17 +18,19 @@ import image4 from '../../assets/image4.png';
 import './editProduct.css';
 // import { Button } from 'react-bootstrap';
 
-const EditProduct = ({ id, onClose, heading, btnHeading }) => {
-  const [imageBase64, setImageBase64] = useState(null);
-  const [productName, setProductName] = useState('');
-  const [productPrice, setProductPrice] = useState(0);
-  const [productQuantity, setProductQuantity] = useState(0);
-  const [productRating, setProductRating] = useState(0);
-  const [productBrand, setProductBrand] = useState('');
-  const [description, setDescription] = useState('');
-  //   const [show, setShow] = useState(false);
-  //   const handleClose = () => setShow(false);
-  //   const handleShow = () => setShow(true);
+const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
+  const [imageBase64, setImageBase64] = useState();
+  const [productName, setProductName] = useState(editObject?.title || '');
+  const [productPrice, setProductPrice] = useState(editObject?.price || ' ');
+  const [productQuantity, setProductQuantity] = useState(editObject?.stock || ' ');
+  const [productRating, setProductRating] = useState(editObject?.rating || ' ');
+  const [productBrand, setProductBrand] = useState(editObject?.brand || '');
+  const [description, setDescription] = useState(editObject?.description || '');
+  const [pro, setPro] = useState({
+    images: editObject?.images || []
+  });
+
+  // const id = editObject._id;
   const dispatch = useDispatch();
   const handleClose = () => {
     onClose();
@@ -40,6 +41,10 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
 
     if (file) {
       const reader = new FileReader();
+      setPro((prev) => ({
+        ...prev,
+        images: [...(prev?.images) || [], file]
+      }));
 
       reader.onload = (e) => {
         const base64String = e.target.result;
@@ -70,29 +75,6 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
     setDescription(e.target.value);
   };
 
-  // addProduct handler
-  // const addProductHandler = () => {
-  //   console.log('add handler executed.');
-  //   dispatch(
-  //     addProduct({
-  //       title: productName,
-  //       brand: productBrand,
-  //       stock: productQuantity,
-  //       price: productPrice,
-  //       description: description,
-  //       image: imageBase64,
-  //       rating: productRating,
-  //     })
-  //   );
-  // };
-
-  console.log('Image as base64 string ', imageBase64);
-  console.log('Type of image ', typeof imageBase64);
-  console.log('handleProductName ', productName);
-  console.log('ProductPrice ', productPrice);
-  console.log('ProductQuantity ', productQuantity);
-  console.log('productRating ', productRating);
-  console.log('productBrand', productBrand);
   console.log('description ', description);
   // sizes array
   const size = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
@@ -105,7 +87,6 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
         onHide={handleClose}
         placement="end"
       >
-        {/* <Button variant="primary" onClick={handleClose} className="me-2">Edit Product</Button> */}
         <Offcanvas.Header>
           <Offcanvas.Title>
             {' '}
@@ -138,6 +119,7 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
                 lable="Product Name"
                 id="product_name"
                 onChange={handleProductName}
+                value={productName}
               />
               <h6 style={{ marginTop: '16px' }}>Size</h6>
               <dive className="size_div">
@@ -157,6 +139,32 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
           }
           <div className="lower_part">
             <div className="pictures">
+              {
+                pro?.images?.map((image) => (
+                  <img
+                    style={{ width: '50px', height: '50px' }}
+                    // onLoad={({ currentTarget }) => {
+                    //   console.log('in load');
+                    //   currentTarget.onload = null;
+                    //   if (currentTarget.src !== `http://localhost:4009/${image}`) {
+                    //     currentTarget.src = `http://localhost:4009/${image}`;
+                    //   }
+                    // }}
+                    // onError={({ currentTarget }) => {
+                    //   console.log('in error');
+                    //   currentTarget.onerror = null;
+                    //   if (currentTarget.src !== imageBase64) {
+                    //     currentTarget.src = imageBase64;
+                    //     currentTarget.alt = 'Picture'
+                    //   }
+                    // }}
+                    src={`http://localhost:4009/${image}`}
+                    // src={`http://localhost:4009/${image}`}
+                    // alt='Pic'
+                    key={image}
+                  />
+                ))
+              }
               <div
                 style={{
                   height: '50px',
@@ -165,9 +173,9 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
                   marginTop: '20px',
                 }}
               >
-                <img src={image1} />
+
               </div>
-              <div style={{ height: '50px', width: '50px', marginTop: '20px' }}>
+              {/* <div style={{ height: '50px', width: '50px', marginTop: '20px' }}>
                 <img src={image2} />
               </div>
               <div
@@ -177,11 +185,8 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
               </div>
               <div style={{ height: '50px', width: '50px' }}>
                 <img src={image4} />
-              </div>
-              {/* <img src={image1} style={{ height: '50px', width: '50px' }}/>
-              <img src={image2}/>
-              <img src={image3}/>
-              <img src={image4}/> */}
+              </div> */}
+
             </div>
             <div className="color_price">
               <h6 style={{ marginTop: '19px' }}>Color</h6>
@@ -209,6 +214,7 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
                 lable="Price"
                 id="price"
                 onChange={handlePrice}
+                value={productPrice}
               />
               <Input
                 type="number"
@@ -216,6 +222,7 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
                 lable="Quantity"
                 id="quantity"
                 onChange={handleQuantity}
+                value={productQuantity}
               />
               <Input
                 type="number"
@@ -223,6 +230,7 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
                 lable="Rating"
                 id="rating"
                 onChange={handleRating}
+                value={productRating}
               />
               <Input
                 type="text"
@@ -230,6 +238,7 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
                 lable="Brand"
                 id="brand"
                 onChange={handleBrand}
+                value={productBrand}
               />
               <Input
                 type="text"
@@ -237,6 +246,7 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
                 lable="Description"
                 id="description"
                 onChange={handleDescription}
+                value={description}
               />
               <CustomButton
                 placeholder={btnHeading}
@@ -248,17 +258,17 @@ const EditProduct = ({ id, onClose, heading, btnHeading }) => {
                 }}
                 onClick={() => {
                   console.log('add handler executed.');
-                  dispatch(
+                  !editObject?._id ? dispatch(
                     addProduct({
                       title: productName,
                       brand: productBrand,
                       stock: productQuantity,
                       price: productPrice,
-                      description: description,
-                      images: imageBase64,
+                      description,
+                      images: pro.images,
                       rating: productRating,
                     })
-                  );
+                  ).then(() => dispatch(getProducts())) : dispatch(UpdateProduct({ _id: editObject._id, title: productName, brand: productBrand, stock: productQuantity, price: productPrice, description, rating: productRating })).then(() => dispatch(getProducts()));
                   handleClose();
                 }}
               />

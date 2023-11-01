@@ -1,24 +1,24 @@
 // library imports
-import Button from 'react-bootstrap/Button';
+// import Button from 'react-bootstrap/Button';
+import CustomButton from '../../button'
 import Card from 'react-bootstrap/Card';
 // component imports
-import image21 from '../../../assets/image21.png'
+
 // redux imports
 
 // style imports
 import './UserCard.css'
-const UserCard = () => {
+const UserCard = ({ product, handleDetails }) => {
   return (
     <Card style={{ width: '18rem', marginBottom: '20px' }}>
-      <Card.Img className='card_img' variant="top" src={image21} alt='image 1' />
+      <Card.Img className='card_img' variant="top" src={`http://localhost:4009/${product?.images[0]}`} alt='image' />
       <Card.Body>
         {/* <Card.Title>Card Title</Card.Title> */}
         <Card.Text>
-          Some quick example text to build on the card title and make up the
-          bulk of the cards content.
+          {`${product?.description}`}
         </Card.Text>
-        <div>Price: <span style={{ color: '#007BFF' }}>$00.00</span></div>
-        <Button className='card_btn'>Details</Button>
+        <div>Price: <span style={{ color: '#007BFF' }}>{`${product?.price}`}</span></div>
+        {product.stock === 0 ? <CustomButton isEnabledbtn={true} style={{ height: '40px', width: '130px', color: 'red', marginLeft: '120px', backgroundColor: 'white' }} placeholder='Out of stock' /> : <CustomButton className='card_btn' onClick={() => handleDetails(product)} placeholder='Details'></CustomButton>}
       </Card.Body>
     </Card>
   );

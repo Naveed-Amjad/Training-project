@@ -8,9 +8,9 @@ const ReactButton = ({
   placeholder,
   onClick,
   style,
-  isEnabledbtn
+  isEnabledbtn,
 }) => {
-  console.log('value of isEnabledbtn in customButton = ', isEnabledbtn);
+  // console.log('value of isEnabledbtn in customButton = ', isEnabledbtn);
   return (
     <>
       <Button disabled={isEnabledbtn} style={style} className={className} variant={type} id={id} size={size} onClick={onClick}>{placeholder}</Button>
