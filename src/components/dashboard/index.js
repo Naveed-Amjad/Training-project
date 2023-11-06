@@ -9,13 +9,13 @@ import CustomLineChart from '../utils/LineChart';
 import CircleGreen from '../../assets/CircleGreen.svg';
 import CircleBlue from '../../assets/CircleBlue.svg';
 import CustomTable from '../Table';
+import { Table } from 'react-bootstrap';
 // Redux imports
 import { getDashboardStats } from '../../redux/slices/dashboardStats';
 import { TopSellingProducts } from '../../redux/slices/productsSlice';
 import { GetNotifications } from '../../redux/slices/notification-slice';
 // style imports
 import './style.css';
-import { Table } from 'react-bootstrap';
 
 // component
 const Dashbord = () => {

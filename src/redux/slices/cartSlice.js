@@ -30,7 +30,16 @@ const cartSlice = createSlice({
     paymentDetails: {}
   },
   reducers: {
-
+    resetState: (state) => {
+      return {
+        ...state,
+        items: [],
+        totalPrice: 0,
+        totalQuantity: null,
+        address: {},
+        paymentDetails: {}
+      }
+    },
     addItem: (state, action) => {
       var itemToAdd = action.payload;
       const cartItems = current(state.items).map(item => item);
@@ -110,6 +119,6 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addItem, removeItem, removeItems, increaseQuantity, clearCart, addAddress, paymentDetails } = cartSlice.actions;
+export const { resetState, addItem, removeItem, removeItems, increaseQuantity, clearCart, addAddress, paymentDetails } = cartSlice.actions;
 
 export default cartSlice.reducer;

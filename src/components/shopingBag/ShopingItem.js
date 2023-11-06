@@ -48,7 +48,8 @@ const ShopingItem = ({ checked, item }) => {
       </div>
       <div className='img_and_details'>
         <div>
-          <img style={{ height: '128px', width: '180px', padding: '6px 6px' }} src={item?.product?.thumbnail} />
+          {console.log('\n\n item in cart ', item?.product?.images?.[0][0])}
+          <img style={{ height: '128px', width: '180px', padding: '6px 6px' }} src={`http://localhost:4009/${item?.product?.images?.[0][0]}`} />
         </div>
         <div>
           <p>{item?.product?.description}</p>

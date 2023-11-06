@@ -20,12 +20,7 @@ import ForgotPassword from './container/auth/ForgotPassword';
 // import ResetPassword from './container/auth/ResetPassword';
 import ShopingBag from './components/shopingBag/ShopingBag';
 import PageNotFound from './components/utils/PageNotFound';
-// import CustomNavbar from './components/Navbar';
-// import CustomSideBar from './components/sidebar';
-// import Rectangle from './components/Rectangle';
-// import AgGrid from './components/AgGrid';
-// import AdminLayout from './components/layout/AdminLayout';
-// import CustomTable from './components/Table';
+
 // Redux imports
 
 // Style imports
@@ -52,7 +47,6 @@ function App() {
 
           <Routes>
             <Route path="/" element={<UserLayout><UserHome /></UserLayout>} />
-            <Route path="/userhome" index element={<UserLayout><UserHome /></UserLayout>} />
             <Route path="/login" exact element={<UserLayout><Login /></UserLayout>} />
             <Route
               path="/shopingbag"

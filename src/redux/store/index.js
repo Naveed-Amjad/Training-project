@@ -17,18 +17,18 @@ const persistConfig = {
 };
 
 const reducers = combineReducers({
-  authReducer: authReducer,
-  productsReducer: productsReducer,
-  cartReducer: cartReducer,
-  orderReducer: orderReducer,
-  notificationReducer: notificationReducer,
-  dashboardStatsReducer: dashboardStatsReducer
+  authReducer,
+  productsReducer,
+  cartReducer,
+  orderReducer,
+  notificationReducer,
+  dashboardStatsReducer
 });
 
 const rootReducer = (state, action) => {
-  if (action.type === 'login/logout') {
-    state = undefined;
-  }
+  // if (action.type === 'login/logout') {
+  //   state = undefined;
+  // }
   return reducers(state, action);
 };
 

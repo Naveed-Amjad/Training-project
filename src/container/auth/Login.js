@@ -60,7 +60,7 @@ const Login = ({ heading }) => {
       console.log({ resp });
       if (!resp.error) {
         navigate('/dashboard')
-        localStorage.getItem('role') === 'admin' ? navigate('/dashboard') : navigate('/userhome')
+        localStorage.getItem('role') === 'admin' ? navigate('/dashboard') : navigate('/')
       }
       // console.log('Login request is initiated: ', { email, password });
     }

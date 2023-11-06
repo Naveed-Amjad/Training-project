@@ -10,12 +10,15 @@ import UserCard from './UserCard';
 // Redux imports
 import { getProducts } from '../../../redux/slices/productsSlice';
 import { addItem } from '../../../redux/slices/cartSlice';
+import { GetNotifications } from '../../../redux/slices/notification-slice';
 // style imports
 import './userHome.css';
 
 //
 const UserHome = () => {
   const products = useSelector((state) => state.productsReducer.products);
+  const { token } = useSelector((state) => state.authReducer);
+
   const [itemDetails, setItemDetails] = useState({});
   const [priceObject, setPriceObject] = useState({});
   const [quantity, setQuantity] = useState(1);
@@ -25,16 +28,9 @@ const UserHome = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
 
-  useEffect(() => {
-    dispatch(getProducts(filters)).then(({ payload }) => {
-      if (payload?.data?.length) {
-        setItemDetails(payload?.data[0]);
-      }
-    });
-  }, []);
+  const userId = localStorage.getItem('id')
 
   useEffect(() => {
-    console.log('fiterr')
     dispatch(getProducts(filters)).then(({ payload }) => {
       if (payload?.data?.length) {
         setItemDetails(payload?.data[0]);
@@ -131,7 +127,7 @@ const UserHome = () => {
   }, 500);
 
   // const title = priceObject.maxPrice ? priceObject.minPrice - priceObject.maxPrice : 'Price'
-  const title = sortFilter === undefined ? 'Default sort' : 'High to low';
+  const title = (sortFilter === undefined || sortFilter === 0) ? 'Default sort' : sortFilter === -1 ? 'High to low' : 'Low to High';
   console.log('SORT FILTER = ', sortFilter);
   return (
     <div className="">
@@ -185,9 +181,9 @@ const UserHome = () => {
             <div className="image">
               <img
                 src={
-                  itemDetails?.thumbnail
-                    ? itemDetails.thumbnail
-                    : products[0]?.thumbnail
+                  itemDetails?.images
+                    ? `http://localhost:4009/${itemDetails?.images[0][0]}`
+                    : ''
                 }
                 style={{ height: '350px', width: '330px' }}
               />
@@ -359,7 +355,7 @@ const UserHome = () => {
                 -
               </span>
               <span className="number_span px-4 pt-1">{quantity}</span>
-              <span className="sign" onClick={() => setQuantity(quantity + 1)}>
+              <span className="sign" id='increasebtn' onClick={() => setQuantity(quantity + 1)}>
                 +
               </span>
             </div>
@@ -370,9 +366,9 @@ const UserHome = () => {
             onClick={() => {
               // setCartItem(products[0])
               if (itemDetails) {
-                dispatch(addItem({ product: itemDetails, quantity: quantity }));
+                dispatch(addItem({ product: itemDetails, quantity }));
               } else {
-                dispatch(addItem({ product: products[0], quantity: quantity }));
+                dispatch(addItem({ product: products[0], quantity }));
               }
               localStorage.getItem('role') === 'user'
                 ? nav('/shopingbag')
