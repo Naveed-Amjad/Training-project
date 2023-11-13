@@ -30,7 +30,6 @@ import { useSelector } from 'react-redux';
 // import { useSelector } from 'react-redux';
 
 function App() {
-  console.log('App is rendering');
   const { token, role } = useSelector((state) => state.authReducer);
   return (
     <BrowserRouter>

@@ -13,7 +13,6 @@ const calculateTotal = (items) => {
 const calculateTotalQuantity = (items) => {
   let totalQuantity = 0;
   for (const item of items) {
-    // const product = item.product;
     const quantity = item.quantity;
     totalQuantity += quantity;
   }
@@ -114,7 +113,6 @@ const cartSlice = createSlice({
     },
     paymentDetails: (state, action) => {
       state.paymentDetails = action.payload;
-      console.log('In payment Details Reducer', state.paymentDetails);
     }
   },
 });

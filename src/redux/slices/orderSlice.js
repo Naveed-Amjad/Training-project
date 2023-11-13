@@ -20,7 +20,6 @@ export const PlaceOrder = createAsyncThunk('placeorder', async (data, { rejectWi
 export const GetOrders = createAsyncThunk('getorder', async (data, { rejectWithValue }) => {
   try {
     const Data = { searchById: data }
-    // console.log('DATA in GetOrders = ', Data);
     const response = await axios({
       method: 'post',
       url: 'http://localhost:4009/v1/getorders',
@@ -28,7 +27,6 @@ export const GetOrders = createAsyncThunk('getorder', async (data, { rejectWithV
     })
     return response;
   } catch (error) {
-    console.log('Error in getting orders catch block');
     return rejectWithValue(error);
   }
 })
@@ -47,7 +45,6 @@ export const UserOrders = createAsyncThunk('userorders', async (data, { rejectWi
 })
 // deliver order
 export const DeliverOrder = createAsyncThunk('deliverorder', async (data, { rejectWithValue }) => {
-  // const { orderId } = data;
   try {
     console.log('DATA ID = ', data);
     const response = await axios({
@@ -78,20 +75,16 @@ const orderSlice = createSlice({
   extraReducers: {
     [PlaceOrder.pending]: (state, action) => {
       state.loading = true;
-      console.log('In orderSlice Pending');
     },
     [PlaceOrder.fulfilled]: (state, action) => {
       state.loading = false;
-      console.log('Payload in orderSlice Fulfilled ', action.payload);
       state.success = true;
       state.error = false;
     },
     [PlaceOrder.rejected]: (state, action) => {
-      console.log('In orderSlice Rejected');
       state.loading = false;
       state.error = true;
       state.success = false;
-      console.log('Payload in orderSlice Rejected ', action.payload);
       notification.error({
         message: 'error',
         description: action?.payload?.message,
@@ -109,11 +102,9 @@ const orderSlice = createSlice({
     },
     [GetOrders.rejected]: (state, action) => {
       state.loading = false;
-      console.log('PAYLOAD In rejected = ', action.payload);
     },
     [UserOrders.pending]: (state) => {
       state.loading = true;
-      console.log('pending pending');
     },
     [UserOrders.fulfilled]: (state, action) => {
       state.loading = false;

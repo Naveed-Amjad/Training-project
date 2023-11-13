@@ -23,7 +23,7 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
   const [productName, setProductName] = useState(editObject?.title || '');
   const [productPrice, setProductPrice] = useState(editObject?.price || ' ');
   const [productQuantity, setProductQuantity] = useState(editObject?.stock || ' ');
-  const [productRating, setProductRating] = useState(editObject?.rating || ' ');
+  const [productColor, setProductColor] = useState(editObject?.color || ' ');
   const [productBrand, setProductBrand] = useState(editObject?.brand || '');
   const [description, setDescription] = useState(editObject?.description || '');
   const [pro, setPro] = useState({
@@ -64,8 +64,8 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
   const handleQuantity = (e) => {
     setProductQuantity(e.target.value);
   };
-  const handleRating = (e) => {
-    setProductRating(e.target.value);
+  const handleColor = (e) => {
+    setProductColor(e.target.value);
   };
 
   const handleBrand = (e) => {
@@ -225,12 +225,12 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
                 value={productQuantity}
               />
               <Input
-                type="number"
-                placeholder="Rating"
-                lable="Rating"
+                type="text"
+                placeholder="Color"
+                lable="Color"
                 id="rating"
-                onChange={handleRating}
-                value={productRating}
+                onChange={handleColor}
+                value={productColor}
               />
               <Input
                 type="text"
@@ -266,9 +266,9 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
                       price: productPrice,
                       description,
                       images: pro.images,
-                      rating: productRating,
+                      color: productColor,
                     })
-                  ).then(() => dispatch(getProducts())) : dispatch(UpdateProduct({ _id: editObject._id, title: productName, brand: productBrand, stock: productQuantity, price: productPrice, description, rating: productRating })).then(() => dispatch(getProducts()));
+                  ).then(() => dispatch(getProducts())) : dispatch(UpdateProduct({ _id: editObject._id, title: productName, brand: productBrand, stock: productQuantity, price: productPrice, description, color: productColor })).then(() => dispatch(getProducts()));
                   handleClose();
                 }}
               />

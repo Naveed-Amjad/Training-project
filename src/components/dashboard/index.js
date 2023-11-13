@@ -25,9 +25,11 @@ const Dashbord = () => {
   const totalPaidOrders = useSelector(
     (state) => state.dashboardStatsReducer?.data?.totalPaidOrders
   );
+  console.log('🚀 ~ file: index.js:28 ~ Dashbord ~ totalPaidOrders:', totalPaidOrders)
   const totalUnpaidOrders = useSelector(
     (state) => state.dashboardStatsReducer?.data?.totalUnpaidOrders
   );
+  console.log('🚀 ~ file: index.js:32 ~ Dashbord ~ totalUnpaidOrders:', totalUnpaidOrders)
   const oneYearStats = useSelector(
     (state) => state.dashboardStatsReducer?.data?.oneYearStats
   );
@@ -37,6 +39,7 @@ const Dashbord = () => {
     { name: 'Group A', value: totalPaidOrders },
     { name: 'Group B', value: totalUnpaidOrders },
   ];
+  console.log('\n\n\n DATA = ', data);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getDashboardStats());

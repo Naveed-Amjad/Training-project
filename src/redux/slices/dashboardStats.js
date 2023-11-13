@@ -9,7 +9,6 @@ export const getDashboardStats = createAsyncThunk('getDashboardStats', async (da
     })
     return response;
   } catch (error) {
-    console.log('Error in get dashboard stats');
     return rejectWithValue(error);
   }
 })
@@ -22,14 +21,11 @@ const dashboardStats = createSlice({
   reducers: {},
   extraReducers: {
     [getDashboardStats.pending]: (state) => {
-      console.log('In pending');
     },
     [getDashboardStats.fulfilled]: (state, action) => {
-      console.log('ACTION aaaaa = ', action.payload);
       state.data = action.payload.data[0];
     },
     [getDashboardStats.rejected]: (state) => {
-      console.log('In rejected');
     }
   }
 })

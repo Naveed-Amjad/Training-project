@@ -9,12 +9,12 @@ import Badge from 'react-bootstrap/Badge';
 import UserOrdersModel from '../orders/userOrdersModel';
 import NotificationsModel from '../notifications/notification-model';
 // Redux imports
-import { logout } from '../../redux/slices/authSlice';
+import { logout, resetAuthState } from '../../redux/slices/authSlice';
 import { UserOrders } from '../../redux/slices/orderSlice';
+import { resetState } from '../../redux/slices/cartSlice';
 // style imports
 import { Navbar, Container, Image, NavDropdown, Nav, Button } from 'react-bootstrap';
 import Img from '../../assets/naveed.jpg';
-import { resetState } from '../../redux/slices/cartSlice';
 
 const CustomNavbar = ({ changeState }) => {
   const [showNotificationsModel, setShowNotificationsModel] = useState(false);
@@ -68,6 +68,7 @@ const CustomNavbar = ({ changeState }) => {
             <NavDropdown.Item onClick={() => {
               dispatch(logout());
               dispatch(resetState());
+              dispatch(resetAuthState());
               nav('/');
               // dispatch(resetState());
             }}>Logout</NavDropdown.Item>

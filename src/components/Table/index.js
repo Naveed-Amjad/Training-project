@@ -43,14 +43,14 @@ const CustomTable = ({ data, tableHeading, hasActions }) => {
                 <span>
                   {
                     <img
-                      src={`http://localhost:4009/${item?.images[0][0]}`}
+                      src={item?.images?.length ? `http://localhost:4009/${item?.images[0][0]}` : null}
                       style={{ height: '30px', width: '30px' }}
                     />
                   }
                 </span>
                 {item?.title}
               </td>
-              <td>{item?.rating}</td>
+              <td>{item?.color}</td>
               <td>{item?.brand}</td>
               <td>{item?.price}</td>
               <td>{item?.stock}</td>

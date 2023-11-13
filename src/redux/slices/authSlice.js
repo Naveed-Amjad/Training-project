@@ -5,20 +5,16 @@ import { notification } from 'antd';
 
 // asyn thunk
 export const loginUser = createAsyncThunk('loginUser', async (data, { rejectWithValue }) => {
-  // console.log('data body ', data);
   try {
     const response = await axios({
       method: 'POST',
       url: 'http://localhost:4009/v1/auth/login',
       data
     })
-    // console.log({ response });
     return response;
   } catch (error) {
     return rejectWithValue(error);
   }
-
-  //   const data = await res.data;
 })
 // signup user
 export const signupUser = createAsyncThunk('signupUser', async (data, { rejectWithValue }) => {
@@ -28,7 +24,6 @@ export const signupUser = createAsyncThunk('signupUser', async (data, { rejectWi
       url: 'http://localhost:4009/v1/auth/signup',
       data
     })
-    console.log('Response in signup ', response);
     return response;
   } catch (error) {
     rejectWithValue(error);
@@ -42,8 +37,6 @@ export const forgotPassword = createAsyncThunk('forgotpassword', async (data, { 
       url: 'http://localhost:4009/v1//auth/forgotpassword',
       data
     })
-    console.log('In forgot thunk');
-    console.log({ response });
     return response.data;
   } catch (error) {
     return rejectWithValue(error)
@@ -56,11 +49,9 @@ export const resetPassword = createAsyncThunk('resetpassword', async (data, { re
       method: 'POST',
       url: 'http://localhost:4009/v1//auth/resetpassword',
       data,
-      // params: data.token
     })
     return response.data;
   } catch (error) {
-    console.log('Error in reset password');
     return rejectWithValue(error);
   }
 })
@@ -74,9 +65,22 @@ const authSlice = createSlice({
     role: localStorage.getItem('role'),
     success: null,
     name: null,
-    id: null
+    id: null,
+    email: null
   },
   reducers: {
+    resetAuthState: (state) => {
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        token: null,
+        role: null,
+        success: null,
+        name: null,
+        id: null
+      }
+    },
     logout: (state, action) => {
       // state.token = null;
       // state.role = null;
@@ -90,22 +94,20 @@ const authSlice = createSlice({
     [loginUser.fulfilled]: (state, { payload: { data } }) => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('role', data.role);
-      console.log('NAME = ', data.name);
       state.loading = false;
       state.error = false;
-      state.token = data.token;
-      state.role = data.role;
-      state.name = data.name;
-      state.id = data.id;
-      localStorage.setItem('role', data.role);
-      localStorage.setItem('name', state.name);
-      localStorage.setItem('id', state.id);
+      state.token = data?.token;
+      state.role = data?.role;
+      state.name = data?.name;
+      state.id = data?.id;
+      state.email = data?.email;
+      localStorage.setItem('role', data?.role);
+      localStorage.setItem('name', state?.name);
+      localStorage.setItem('id', state?.id);
     },
     [loginUser.rejected]: (state, action) => {
-      console.log('payload in rejected', action.payload)
       state.loading = false;
       state.error = action.payload;
-      console.log('password error in slice');
     },
     [signupUser.pending]: (state, action) => {
       state.loading = true;
@@ -165,5 +167,5 @@ const authSlice = createSlice({
   }
 })
 
-export const { logout } = authSlice.actions;
+export const { logout, resetAuthState } = authSlice.actions;
 export default authSlice.reducer;

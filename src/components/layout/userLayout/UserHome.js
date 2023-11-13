@@ -23,7 +23,9 @@ const UserHome = () => {
   const [priceObject, setPriceObject] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [searchName, setSearchName] = useState('');
+  const [colorFilter, setColorFilter] = useState('');
   const [sortFilter, setSortFilter] = useState();
+  const [colorName, setColorName] = useState();
   const [filters, setFilters] = useState([]);
   const dispatch = useDispatch();
   const nav = useNavigate();
@@ -31,6 +33,7 @@ const UserHome = () => {
   const userId = localStorage.getItem('id')
 
   useEffect(() => {
+    console.log('\n\n\nFilter changed ', filters);
     dispatch(getProducts(filters)).then(({ payload }) => {
       if (payload?.data?.length) {
         setItemDetails(payload?.data[0]);
@@ -54,6 +57,14 @@ const UserHome = () => {
       sort: value
     });
   }
+  const handleColorFilter = (value) => {
+    setColorFilter(value);
+    setColorName(value);
+    setFilters({
+      ...filters,
+      color: value
+    })
+  }
   const handlePriceFilter = (min, max) => {
     setPriceObject({
       minPrice: min,
@@ -65,6 +76,28 @@ const UserHome = () => {
       maxPrice: max,
     });
   };
+  const colorArr = [
+    {
+      title: 'Black',
+      onClick: () => handleColorFilter('Black')
+    },
+    {
+      title: 'Grey',
+      onClick: () => handleColorFilter('Grey')
+    },
+    {
+      title: 'Red',
+      onClick: () => handleColorFilter('Red')
+    },
+    {
+      title: 'Green',
+      onClick: () => handleColorFilter('Green')
+    },
+    {
+      title: 'Orange',
+      onClick: () => handleColorFilter('Orange')
+    },
+  ]
   const arr = [
     {
       title: '0-100',
@@ -126,14 +159,23 @@ const UserHome = () => {
     });
   }, 500);
 
+  const SizeArray = ['S', 'XS', 'M', 'L', 'XL', '2XL', '3XL']
+  const colorArray = ['#155724', '#AAA', '#1B1E21', '#231579', '#740F0F'];
   // const title = priceObject.maxPrice ? priceObject.minPrice - priceObject.maxPrice : 'Price'
   const title = (sortFilter === undefined || sortFilter === 0) ? 'Default sort' : sortFilter === -1 ? 'High to low' : 'Low to High';
-  console.log('SORT FILTER = ', sortFilter);
+  const colorTitle = colorName || 'Color';
   return (
     <div className="">
       <div className="filters">
         <div className="filter_divs justify-content-center">
           <span className="heading">Products</span>
+        </div>
+        <div>
+          <FilterDropdown
+            style={{ width: '90px', height: '35px', margin: '30px' }}
+            title={colorTitle}
+            list={colorArr}
+          />
         </div>
         <div className="filter_divs">
           <FilterDropdown
@@ -142,7 +184,6 @@ const UserHome = () => {
             list={arr}
           />
           <div style={{ marginLeft: '20px', height: '30px', width: '230px', color: 'blue' }}>{priceObject.maxPrice ? `Price range ${priceObject.minPrice} - ${priceObject.maxPrice} is selected` : ''}</div>
-          {console.log('minPrice = ', priceObject.minPrice)}
         </div>
         <div className="filter_divs ">
           <h6 className="mt-2">Sorting</h6>
@@ -197,137 +238,45 @@ const UserHome = () => {
               <div className="colors_div">
                 <h6 style={{ marginTop: '40px' }}>Color: </h6>
                 <div className="colors">
-                  <div className="color_img_div">
-                    <div
-                      style={{
-                        height: '28px',
-                        width: '28px',
-                        background: '#155724',
-                        padding: '6px',
-                      }}
-                    ></div>
-                  </div>
-                  <div className="color_img_div">
-                    <div
-                      style={{
-                        height: '28px',
-                        width: '28px',
-                        background: '#AAA',
-                        padding: '6px',
-                      }}
-                    ></div>
-                  </div>
-                  <div className="color_img_div">
-                    <div
-                      style={{
-                        height: '28px',
-                        width: '28px',
-                        background: '#1B1E21',
-                        padding: '6px',
-                      }}
-                    ></div>
-                  </div>
-                  <div className="color_img_div">
-                    <div
-                      style={{
-                        height: '28px',
-                        width: '28px',
-                        background: '#231579',
-                        padding: '6px',
-                      }}
-                    ></div>
-                  </div>
-                  <div className="color_img_div">
-                    <div
-                      style={{
-                        height: '28px',
-                        width: '28px',
-                        background: '#740F0F',
-                        padding: '6px',
-                      }}
-                    ></div>
-                  </div>
+                  {
+                    colorArray?.map((color, index) => {
+                      return (
+                        <div key={index} className="color_img_div">
+                          <div
+                            style={{
+                              height: '28px',
+                              width: '28px',
+                              background: color,
+                              padding: '6px',
+                            }}
+                          >
+                            {/* {color} */}
+                          </div>
+                        </div>
+                      )
+                    })
+                  }
                 </div>
                 <div className="size">
                   <h6>Size: </h6>
                   <div className="size_div">
-                    <div className="size_div_child">
-                      <div
-                        style={{
-                          height: '28px',
-                          width: '28px',
-                          padding: '6px',
-                        }}
-                      >
-                        XS
-                      </div>
-                    </div>
-                    <div className="size_div_child">
-                      <div
-                        style={{
-                          height: '28px',
-                          width: '28px',
-                          padding: '6px',
-                        }}
-                      >
-                        S
-                      </div>
-                    </div>
-                    <div className="size_div_child">
-                      <div
-                        style={{
-                          height: '28px',
-                          width: '28px',
-                          padding: '6px',
-                        }}
-                      >
-                        M
-                      </div>
-                    </div>
-                    <div className="size_div_child">
-                      <div
-                        style={{
-                          height: '28px',
-                          width: '28px',
-                          padding: '6px',
-                        }}
-                      >
-                        L
-                      </div>
-                    </div>
-                    <div className="size_div_child">
-                      <div
-                        style={{
-                          height: '28px',
-                          width: '28px',
-                          padding: '6px',
-                        }}
-                      >
-                        XL
-                      </div>
-                    </div>
-                    <div className="size_div_child">
-                      <div
-                        style={{
-                          height: '28px',
-                          width: '28px',
-                          padding: '6px',
-                        }}
-                      >
-                        2XL
-                      </div>
-                    </div>
-                    <div className="size_div_child">
-                      <div
-                        style={{
-                          height: '28px',
-                          width: '28px',
-                          padding: '6px',
-                        }}
-                      >
-                        3XL
-                      </div>
-                    </div>
+                    {
+                      SizeArray?.map((size, index) => {
+                        return (
+                          <div key={index} className="size_div_child">
+                            <div
+                              style={{
+                                height: '28px',
+                                width: '28px',
+                                padding: '6px',
+                              }}
+                            >
+                              {size}
+                            </div>
+                          </div>
+                        )
+                      })
+                    }
                   </div>
                 </div>
                 <div className="price_div">

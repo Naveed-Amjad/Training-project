@@ -1,29 +1,36 @@
 // libray imports
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 // component imports
 import CustomButton from '../../components/button';
 import DeliveryAddress from './DeliveryAddress';
+import ChangeAddress from '../utils/change-address';
 import Trash from '../../assets/Trash.svg';
 // Redux imports
-
+import { getUserAddress } from '../../redux/slices/address-slice';
 // style imports
 import './selectAll.css';
 
 //
-const SelectAllComponent = ({ onChange, onClick, url, setEnable }) => {
+const SelectAllComponent = ({ onChange, onClick, url, setEnable, setUserAddress }) => {
   const [addressModel, setAddressModel] = useState(false);
-  // const [userAddressDetails, setUserAddressDetails] = useState(null);
-  // console.log('🚀 ~ file: SelectAll.js:17 ~ SelectAllComponent ~ userAddressDetails:', userAddressDetails)
-  const userAddressDetails = useSelector((state) => state.cartReducer.address);
-  console.log(userAddressDetails, 'userAddressDetails')
+  const [changeAddressModel, setChangeAddressModel] = useState(false);
+  const [index, setIndex] = useState();
+  const id = useSelector((state) => state.authReducer?.id);
+  const userAddressDetails = useSelector((state) => state.addressReducer.userAddress);
   const handleClose = () => {
     setAddressModel(false);
   };
   const handleSetIsEnabled = () => {
     setEnable();
   };
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getUserAddress({ userId: id }))
+  }, [])
+
   const text = 'Select all items';
+
   return (
     <div className="selectall_items">
       <div style={{ height: 'auto', width: '150px', alignItems: 'center' }}>
@@ -38,7 +45,7 @@ const SelectAllComponent = ({ onChange, onClick, url, setEnable }) => {
             {/* {text} */}
           </>
         ) : (
-          !userAddressDetails?.fullName ? <CustomButton
+          !userAddressDetails[0]?.fullName ? <CustomButton
             onClick={() => setAddressModel(true)}
             placeholder="Add Delivery Address"
             style={{
@@ -48,10 +55,13 @@ const SelectAllComponent = ({ onChange, onClick, url, setEnable }) => {
             }}
           />
             : <div style={{ display: 'flex' }}>
-              <div style={{ flexBasis: '25%', marginLeft: '70px' }}><h6>Name</h6>{`${userAddressDetails.fullName}`}</div>
-              <div style={{ flexBasis: '25%', marginLeft: '70px' }}><h6>Contact</h6>{`${userAddressDetails.mobileNumber}`}</div>
-              <div style={{ flexBasis: '25%', marginLeft: '70px' }}><h6>City</h6>{`${userAddressDetails.city}`}</div>
-              <div style={{ flexBasis: '25%', marginLeft: '70px' }}><h6>Address</h6>{`${userAddressDetails.address}`}</div>
+              <div style={{ flexBasis: '25%', marginLeft: '70px' }}><h6>Name</h6>{`${userAddressDetails[index || 0]?.fullName}`}</div>
+              <div style={{ flexBasis: '25%', marginLeft: '70px' }}><h6>Contact</h6>{`${userAddressDetails[index || 0]?.phoneNumber}`}</div>
+              <div style={{ flexBasis: '25%', marginLeft: '70px' }}><h6>City</h6>{`${userAddressDetails[index || 0]?.city}`}</div>
+              <div style={{ flexBasis: '25%', marginLeft: '70px' }}><h6>Address</h6>{`${userAddressDetails[index || 0]?.address}`}</div>
+              <div style={{ margin: '20px 0px 0px 160px' }}>
+                <CustomButton onClick={() => setChangeAddressModel(true)} style={{ height: '35px', width: '100px', backgroundColor: 'white', color: 'blue' }} placeholder='Change' />
+              </div>
             </div>)}
         {addressModel && (
           <DeliveryAddress
@@ -60,6 +70,7 @@ const SelectAllComponent = ({ onChange, onClick, url, setEnable }) => {
             onClose={handleClose}
           />
         )}
+        {changeAddressModel && <ChangeAddress setUserAddress={setUserAddress} indexSelected={index} setIndex={setIndex} userAddressDetails={userAddressDetails} onClose={() => setChangeAddressModel(false)} />}
       </div>
       <div
         style={{

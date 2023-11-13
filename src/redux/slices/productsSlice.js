@@ -6,21 +6,14 @@ import { notification } from 'antd';
 export const getProducts = createAsyncThunk(
   'getProducts',
   async (data, { rejectWithValue }) => {
-    // console.log('Filters data in getProducts = ', data);
-    // let minPrice;
-    // let maxPrice;
-    // console.log('Type of minPrice ', typeof data.minPrice);
     try {
       const response = await axios({
         method: 'GET',
         url: 'http://localhost:4009/v1/products',
         params: data
       });
-      // console.log('data in getPRoducts ', data);
-      // console.log('products from database ', response.data);
       return response;
     } catch (error) {
-      // console.log({ error });
       return rejectWithValue(error);
     }
   }
@@ -59,7 +52,6 @@ export const addProduct = createAsyncThunk(
         data,
       });
 
-      // console.log('Response in addproduct', response);
       // Success Notification
       notification.success({
         message: 'Success',
@@ -79,6 +71,19 @@ export const addProduct = createAsyncThunk(
     }
   }
 );
+// add bulk product
+export const addBulkProducts = createAsyncThunk('addBulkProducts', async (data, { rejectWithValue }) => {
+  try {
+    console.log('\n\n DATA == ', data);
+    const response = await axios({
+      method: 'POST',
+      url: 'http://localhost:4009/v1/addbulk',
+      data
+    })
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+})
 
 // delete product extra reducer
 export const deleteProduct = createAsyncThunk(
@@ -165,7 +170,30 @@ const productsSlice = createSlice({
       state.success = action.payload.message;
     },
     [addProduct.rejected]: (state, action) => {
-      state.error = action.payload;
+      state.error = action.payload?.error;
+    },
+    // add bulk
+    [addBulkProducts.pending]: (state, action) => {
+      console.log('in bulk pending');
+      state.isLoading = true;
+    },
+    [addBulkProducts.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      // Success Notification
+      notification.success({
+        message: 'Success',
+        description: 'Product added successfully.',
+        type: 'success',
+      });
+    },
+    [addBulkProducts.rejected]: (state, action) => {
+      state.isLoading = false;
+      // Error Notification
+      notification.error({
+        message: 'Error',
+        description: 'Failed to add products. Please try again.',
+        type: 'error',
+      });
     },
     // top selling states
     [TopSellingProducts.pending]: (state) => {
@@ -193,7 +221,7 @@ const productsSlice = createSlice({
     },
     [UpdateProduct.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.data.message;
+      state.error = action?.payload?.data?.message;
     }
   },
 });

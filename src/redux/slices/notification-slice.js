@@ -3,7 +3,6 @@ import axios from 'axios';
 
 export const GetNotifications = createAsyncThunk('getNotifications', async (data, { rejectWithValue }) => {
   try {
-    console.log('\n\n user id in slice ', data);
     const response = await axios({
       method: 'GET',
       url: 'http://localhost:4009/v1/getnotifications',
@@ -18,7 +17,6 @@ export const GetNotifications = createAsyncThunk('getNotifications', async (data
 export const ReadNotification = createAsyncThunk('readNotification', async (data, { rejectWithValue }) => {
   try {
     // const _id = data;
-    console.log('\n\n Read notification ID = ', data);
     const response = await axios({
       method: 'POST',
       url: 'http://localhost:4009/v1/readnotification',
@@ -98,7 +96,6 @@ const notificationSlice = createSlice({
     },
     [GetNotifications.fulfilled]: (state, action) => {
       state.isLoading = false;
-      console.log('\n\n admin notifications = ', action.payload?.data);
       state.adminNotifications = action?.payload?.data;
     },
     [GetNotifications.rejected]: (state, action) => {

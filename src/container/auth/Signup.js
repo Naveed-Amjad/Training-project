@@ -1,17 +1,16 @@
 // library imports
-
-// component imports
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { Form } from 'react-bootstrap';
+// component imports
 import Input from '../../components/input';
 import Button from '../../components/button';
-import { Form } from 'react-bootstrap';
-// import Button from '../../components/button'
 // Redux imports
 import { signupUser } from '../../redux/slices/authSlice';
 // style imports
 import './style.css';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+
 //
 const Signup = ({ heading }) => {
   const [name, setName] = useState('');
@@ -23,7 +22,7 @@ const Signup = ({ heading }) => {
 
   // name input handler
   const nameInputHandler = (event) => {
-    if (name === ' ' || name.length < 5) {
+    if (name === ' ' || name.length < 3) {
       setNameError('Please enter your full name');
     } else {
       setNameError(false);
@@ -109,18 +108,6 @@ const Signup = ({ heading }) => {
             <Form.Text style={{ color: 'red' }}>{errorPassword}</Form.Text>
           )}
         </div>
-        {/* <div className="input_container">
-          <Input
-            type="number"
-            placeholder="Mobile number"
-            lable="Mobile"
-            id="mobile"
-            onChange={passwordHandler}
-          />
-          {errorPassword && (
-            <Form.Text style={{ color: 'red' }}>{errorPassword}</Form.Text>
-          )}
-        </div> */}
         <div className="input_container">
           <Button
             className="btn"

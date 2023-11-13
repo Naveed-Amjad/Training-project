@@ -11,31 +11,35 @@ import OrderPlaced from '../utils/OrderPlaced';
 // Redux imports
 import { PlaceOrder } from '../../redux/slices/orderSlice';
 import { clearCart } from '../../redux/slices/cartSlice';
+import { DeductCharges } from '../../redux/slices/payment-slice';
 // style imports
 import './addpayment.css';
 //
-const AddPayment = () => {
+const AddPayment = ({ userAddress }) => {
   const [paymentModel, setPaymentModel] = useState(false);
   const [showPaymentCard, setShowPaymentCard] = useState(false);
   // const [paymentDetails, setPaymentDetails] = useState({});
   const [showOrderPlacedModel, setShowOrderPlacedModel] = useState(false);
   const userId = localStorage.getItem('id');
   const userName = localStorage.getItem('name');
-  const { items, totalPrice, totalQuantity, address } = useSelector((state) => state.cartReducer)
+  const { items, totalPrice, totalQuantity } = useSelector((state) => state.cartReducer)
+  // const address = useSelector((state) => state.addressReducer.userAddress)
   const { success, error } = useSelector((state) => state.orderReducer);
   const { paymentDetails } = useSelector((state) => state.cartReducer)
-
+  const email = useSelector((state) => state.authReducer?.email);
+  const amount = useSelector((state) => state.cartReducer?.totalPrice);
+  const { cardId, customerId } = useSelector((state) => state.paymentReducer);
   const dispatch = useDispatch();
   const handleClose = () => {
     setPaymentModel(false);
   };
-  console.log('ADDRESS = ', address);
+  // console.log('ADDRESS = ', address[0]);
   //
   const handleCardShow = () => {
     setShowPaymentCard(true);
   };
   const handleorder = () => {
-    dispatch(PlaceOrder({ items, userId, userName, totalAmount: totalPrice, totalQuantity, shippingAddress: address }));
+    dispatch(PlaceOrder({ items, userId, userName, totalAmount: totalPrice, totalQuantity, shippingAddress: userAddress, email, amount, cardId, customerId }));
   }
 
   useEffect(() => {
@@ -53,9 +57,10 @@ const AddPayment = () => {
             image={MasterCard}
             cardTitle="Master Card"
             paymentDetails={paymentDetails}
+            userAddress={userAddress}
           />
         ) : (
-          !address?.fullName ? <CustomButton
+          !userAddress?.fullName ? <CustomButton
             onClick={() => {
               setPaymentModel(true);
             }}
@@ -85,7 +90,7 @@ const AddPayment = () => {
                 width: '199px',
                 margin: '20px 0px 20px 40px',
                 backgroundColor: 'white',
-                color: address ? '#007BFF' : '#868E96',
+                color: userAddress ? '#007BFF' : '#868E96',
                 border: '',
               }}
               isEnabledbtn={false}
@@ -117,7 +122,7 @@ const AddPayment = () => {
             handleorder();
           }}
         />
-          : (items?.length ? <CustomButton
+          : (items?.length && cardId ? <CustomButton
             style={{
               height: '46px',
               width: '396px',

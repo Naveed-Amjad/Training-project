@@ -17,7 +17,7 @@ import './style.css';
 const ShopingBag = ({ heading, url }) => {
   const totalPrice = useSelector((state) => state.cartReducer.totalPrice);
   const [isEnabledbtn, setIsEnabledbtn] = useState(true);
-  console.log('isEnabledbtn value = ', isEnabledbtn);
+  const [userAddress, setUserAddress] = useState({});
   const setState = () => {
     setIsEnabledbtn(false);
   }
@@ -35,11 +35,12 @@ const ShopingBag = ({ heading, url }) => {
             <SelectAllComponent
               setEnable={() => setState}
               url={url}
+              setUserAddress={setUserAddress}
             />
           ) : (
             <SelectAllComponent url={url} />
           )}
-          {items.length ? items?.map((item, index) => {
+          {items?.length ? items?.map((item, index) => {
             return (
               <ShopingItem
                 key={index}
@@ -47,7 +48,7 @@ const ShopingBag = ({ heading, url }) => {
               />
             );
           }) : ''}
-          <div> {!items.length && <div style={{ margin: '100px 0px 0px 600px' }}>
+          <div> {!items?.length && <div style={{ margin: '100px 0px 0px 600px' }}>
             <h3 style={{ color: '#007BFF' }}>Cart is Empty</h3>
             <CustomButton onClick={() => navigate('/')} style={{ height: '40px', width: '130px', marginLeft: '20px' }} placeholder='Add Products' />
           </div>} </div>
@@ -63,7 +64,7 @@ const ShopingBag = ({ heading, url }) => {
         />
           : ''}
         {window.location.pathname === '/checkout' && (
-          <AddPayment />
+          <AddPayment userAddress={userAddress} />
         )}
       </div>
     </div>

@@ -2,13 +2,16 @@
 import { useSelector } from 'react-redux';
 // component imports
 import EditPencil from '../../assets/EditPencil.svg';
-
+import ChangePaymentMethodModel from '../payment/change-payment-card';
 // style imports
 import './style.css'
+import { useState } from 'react';
 //
-const PaymentCard = ({ image, cardTitle, paymentDetails }) => {
-  const userName = useSelector((state) => state.cartReducer.address);
+const PaymentCard = ({ image, cardTitle, paymentDetails, userAddress }) => {
+  const [changeModel, setChangeModel] = useState(false);
+  const userName = useSelector((state) => state.addressReducer.userAddress);
   const cardLastFourDigit = paymentDetails.cardNumber.slice(-4);
+  console.log('\n\n\n userAddres in PaymentCard ', userAddress);
   return (
     <div className='payment_card_div'>
       <div className='payment_card'>
@@ -26,12 +29,13 @@ const PaymentCard = ({ image, cardTitle, paymentDetails }) => {
           <div style={{ margin: '10px 0px 0px 50px' }}>{paymentDetails.expiryDate}</div>
         </div>
         <div style={{ margin: '10px 0px 0px 20px' }}>
-          {userName?.fullName}
+          {userAddress?.fullName}
         </div>
       </div>
       <div className='edit_button'>
-        <img src={EditPencil} />
+        <img src={EditPencil} onClick={() => setChangeModel(true)} />
       </div>
+      {changeModel && <ChangePaymentMethodModel onClose={() => setChangeModel(false)} />}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import CustomButton from '../button';
 import CustomFormText from '../utils/formText';
 // Redux imports
 import { addAddress } from '../../redux/slices/cartSlice';
+import { addNewAddress, getUserAddress } from '../../redux/slices/address-slice';
 // style imports
 
 //
@@ -25,8 +26,9 @@ const DeliveryAddress = ({ onClose }) => {
   const [userAddress, setAddress] = useState();
   const [addressError, setAddressError] = useState();
 
+  const { id } = useSelector((state) => state.authReducer)
+
   const { address } = useSelector((state) => state.cartReducer)
-  console.log('Address from cart  = ', address);
   const style = { width: '664px', marginTop: '1px' };
   const style1 = { width: '300px', marginTop: '1px' };
 
@@ -52,18 +54,6 @@ const DeliveryAddress = ({ onClose }) => {
   }
 
   const handleSaveAddress = () => {
-    // let error = false;
-    // console.log('XYZ');
-    // if (fullName && fullNameError) setFullNameError('');
-    // console.log('🚀 ~ file: DeliveryAddress.js:74 ~ handleSaveAddress ~ phoneNumberPattern.test(mobileNumber):', phoneNumberPattern.test(mobileNumber))
-    // if (phoneNumberPattern.test(mobileNumber)) {
-    //   setMobileNumberError('');
-    // }
-    // if (country && countryError) setCountryError('');
-    // if (province && provinceError) setProvinceError('');
-    // if (city && cityError) setCityError('');
-    // if (address && addressError) setAddressError('');
-
     if (!fullName) {
       setFullNameError('Please enter full name');
       // error = true
@@ -84,14 +74,15 @@ const DeliveryAddress = ({ onClose }) => {
       // error = true
       console.log('Address is missing');
     } else {
-      dispatch(addAddress({
+      dispatch(addNewAddress({
+        userId: id,
         fullName,
-        mobileNumber,
+        phoneNumber: mobileNumber,
         country,
         province,
         city,
         address: userAddress
-      }))
+      })).then(() => dispatch(getUserAddress({ userId: id })))
       onClose();
     }
   }

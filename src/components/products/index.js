@@ -11,12 +11,15 @@ import { Spin } from 'antd';
 import CustomTable from '../../components/Table';
 import { Button } from 'react-bootstrap';
 import EditProduct from './editProduct';
+import BulkImportModel from './import-bulk-model';
 // Redux imports
 import { getProducts } from '../../redux/slices/productsSlice';
 // style imports
 
 const Products = () => {
   const [addModel, setAddModel] = useState(false);
+  const [bulkModel, setBulkModel] = useState(false);
+  const [file, setFile] = useState();
   const dispatch = useDispatch();
   const data = useSelector((state) => state.productsReducer?.products);
   //
@@ -24,6 +27,7 @@ const Products = () => {
     dispatch(getProducts());
   }, []);
 
+  //
   const { isLoading } = useSelector((state) => state.productsReducer);
   const { error } = useSelector((state) => state.productsReducer);
   const itemsPerPage = 10;
@@ -36,7 +40,7 @@ const Products = () => {
   // table component headings
   const heading = [
     { Text: 'Title', hasArrow: true },
-    { Text: 'Rating', hasArrow: false },
+    { Text: 'Color', hasArrow: false },
     { Text: 'Brand', hasArrow: false },
     { Text: 'Price', hasArrow: true },
     { Text: 'Stock', hasArrow: true },
@@ -62,7 +66,7 @@ const Products = () => {
             <div>
               <div style={{ marginLeft: '0px', marginTop: '30px' }}>
                 <span>
-                  <Button style={{ height: '40px', width: '190px' }}>
+                  <Button onClick={() => { setBulkModel(true) }} style={{ height: '40px', width: '190px' }}>
                     Import Bulk Products
                   </Button>
                 </span>
@@ -81,6 +85,7 @@ const Products = () => {
                     onClose={() => setAddModel(false)}
                   />
                 )}
+                <BulkImportModel show={bulkModel} onClose={() => setBulkModel(false)} />
               </div>
             </div>
           </div>

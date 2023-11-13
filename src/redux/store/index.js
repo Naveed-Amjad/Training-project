@@ -4,6 +4,8 @@ import productsReducer from '../slices/productsSlice';
 import cartReducer from '../slices/cartSlice';
 import orderReducer from '../slices/orderSlice';
 import notificationReducer from '../slices/notification-slice';
+import addressReducer from '../slices/address-slice';
+import paymentReducer from '../slices/payment-slice';
 import dashboardStatsReducer from '../slices/dashboardStats';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
@@ -13,7 +15,7 @@ import { persistReducer } from 'redux-persist';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['cartReducer']
+  whitelist: ['cartReducer', 'authReducer']
 };
 
 const reducers = combineReducers({
@@ -22,13 +24,16 @@ const reducers = combineReducers({
   cartReducer,
   orderReducer,
   notificationReducer,
-  dashboardStatsReducer
+  dashboardStatsReducer,
+  addressReducer,
+  paymentReducer
 });
 
 const rootReducer = (state, action) => {
-  // if (action.type === 'login/logout') {
-  //   state = undefined;
-  // }
+  if (action.type === 'login/logout') {
+    state.cartReducer = undefined;
+    state.addressReducer = undefined;
+  }
   return reducers(state, action);
 };
 

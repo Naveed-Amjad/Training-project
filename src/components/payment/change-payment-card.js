@@ -1,18 +1,17 @@
 // library imports
-
-// component imports
-import { Offcanvas } from 'react-bootstrap';
-import CustomInput from '../../components/input';
-import CustomButton from '../button';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Offcanvas } from 'react-bootstrap';
+// component imports
+import CustomInput from '../../components/input';
+import CustomButton from '../button';
 // Redux imports
 import { paymentDetails } from '../../redux/slices/cartSlice';
 import { AddCustomer } from '../../redux/slices/payment-slice';
 // style imports
 
 //
-const PaymentMethodModel = ({ onClose, setPaymentDetails }) => {
+const ChangePaymentMethodModel = ({ onClose, setPaymentDetails }) => {
   const [cardNumber, setCardNumber] = useState();
   const [expiryDate, setExpiryDate] = useState();
   const [country, setCountry] = useState();
@@ -118,4 +117,4 @@ const PaymentMethodModel = ({ onClose, setPaymentDetails }) => {
   );
 };
 
-export default PaymentMethodModel;
+export default ChangePaymentMethodModel;
