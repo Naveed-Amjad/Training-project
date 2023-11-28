@@ -9,6 +9,7 @@ import { resetPassword } from '../../redux/slices/authSlice';
 // Style imports
 import './style.css'
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const NewPassword = ({ heading }) => {
   const [password, setPassword] = useState();
@@ -39,13 +40,14 @@ const NewPassword = ({ heading }) => {
     }
     setConfirmPassword(event.target.value)
   }
-  console.log(confirmPassword);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleSubmit = () => {
     const query = new URLSearchParams(window.location.search);
     const token = query.get('token');
     dispatch(resetPassword({ newPassword: password, token }));
+    navigate('/login');
   }
 
   return (

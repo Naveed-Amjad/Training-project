@@ -12,14 +12,11 @@ import { loginUser } from '../../redux/slices/authSlice';
 import './style.css';
 
 const Login = ({ heading }) => {
-  // var textMsg = 'Please Enter User Name';
   const navigate = useNavigate();
   const [textMsg, setTextMsg] = useState('');
   const [email, setEmail] = useState();
-  // const [userName, setUserName] = useState(null);
   const [error, setError] = useState(null);
   const wrongPassword = useSelector((state) => state.authReducer.error)
-  console.log('wrongPassword ', wrongPassword);
   const [password, setPassword] = useState();
   //  email validation
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -36,21 +33,9 @@ const Login = ({ heading }) => {
   const passwordChangeHandler = (event) => {
     setPassword(event.target.value);
   };
-  // const userNameHandler = (e) => {
-  //   // console.log(userName);
-  //   // console.log(email);
-  //   // console.log(password);
-  //   setUserName(e.target.value);
-  // };
-  // login handler, dispatch request to lohin user
-  // var textMsg = '';
+
   const dispatch = useDispatch();
   const loginHandler = async () => {
-    // console.log('userName ', userName);
-    // if (!userName) {
-    //   // textMsg = 'please Enter User Name'
-    //   setTextMsg('Please enter user name');
-    // }
     if (!email) {
       setTextMsg('Please enter email')
     } else if (!password) {
@@ -62,7 +47,6 @@ const Login = ({ heading }) => {
         navigate('/dashboard')
         localStorage.getItem('role') === 'admin' ? navigate('/dashboard') : navigate('/')
       }
-      // console.log('Login request is initiated: ', { email, password });
     }
   };
 
@@ -73,17 +57,6 @@ const Login = ({ heading }) => {
         <div className="heading">
           <h1>{heading}</h1>
         </div>
-        {/* <div className="input_container">
-          <Input
-            className="input_filed"
-            type="text"
-            placeholder="Enter User Name"
-            lable="Enter User name"
-            id="user"
-            onChange={userNameHandler}
-          />
-          {!userName && <CustomFormText textMsg={textMsg} />}
-        </div> */}
         <div className="input_container">
           <Input
             className="input_field"
@@ -108,12 +81,6 @@ const Login = ({ heading }) => {
           {wrongPassword && <CustomFormText textMsg='Wrong password' />}
           {!password && <CustomFormText textMsg={textMsg} />}
         </div>
-        {/* <Form.Check
-          className="checkbox"
-          type="checkbox"
-          label="Remember me"
-          id="disabled-default-checkbox"
-        /> */}
         <div className="input_container">
           <Button
             className="btn"

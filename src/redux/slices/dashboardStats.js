@@ -17,6 +17,7 @@ const dashboardStats = createSlice({
   initialState: {
     data: [],
     success: false,
+    topSellingProducts: []
   },
   reducers: {},
   extraReducers: {
@@ -24,6 +25,7 @@ const dashboardStats = createSlice({
     },
     [getDashboardStats.fulfilled]: (state, action) => {
       state.data = action.payload.data[0];
+      state.topSellingProducts = action?.payload?.data[0]?.topSellingProducts;
     },
     [getDashboardStats.rejected]: (state) => {
     }

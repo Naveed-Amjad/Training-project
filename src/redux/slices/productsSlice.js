@@ -18,10 +18,23 @@ export const getProducts = createAsyncThunk(
     }
   }
 );
+// get product details
+export const getProductDetails = createAsyncThunk('getProductDetail', async (data, { rejectWithValue }) => {
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: 'http://localhost:4009/v1/getproductdetails',
+      params: data
+    })
+
+    return response;
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+})
 // top selling products
 export const TopSellingProducts = createAsyncThunk('topsellingproducts', async (data, { rejectWithValue }) => {
   try {
-    console.log('top thunk runs');
     const response = await axios({
       method: 'GET',
       url: 'http://localhost:4009/v1/topselling'
@@ -36,12 +49,6 @@ export const TopSellingProducts = createAsyncThunk('topsellingproducts', async (
 export const addProduct = createAsyncThunk(
   'addProduct',
   async (data, { rejectWithValue }) => {
-    console.log({ data });
-    // let formData = new FormData();
-    // for(let i=0;i<data?.images?.length;i++){
-    //   formData.append('images',data.images[i]);
-    // }
-    console.log('data in addproduct ', data);
     try {
       const response = await axios({
         method: 'POST',
@@ -74,12 +81,12 @@ export const addProduct = createAsyncThunk(
 // add bulk product
 export const addBulkProducts = createAsyncThunk('addBulkProducts', async (data, { rejectWithValue }) => {
   try {
-    console.log('\n\n DATA == ', data);
     const response = await axios({
       method: 'POST',
       url: 'http://localhost:4009/v1/addbulk',
       data
     })
+    return response;
   } catch (error) {
     return rejectWithValue(error);
   }
@@ -116,9 +123,14 @@ export const deleteProduct = createAsyncThunk(
 // update product thunk
 export const UpdateProduct = createAsyncThunk('updateproduct', async (data, { rejectWithValue }) => {
   try {
+    // console.log('Update Prod Data: ', data)
+    console.log('upate pro data ', data);
     const response = await axios({
       method: 'PATCH',
       url: 'http://localhost:4009/v1/updateproduct',
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
       data
     })
     return response;
@@ -135,7 +147,11 @@ const productsSlice = createSlice({
     error: null,
     success: null,
     products: [],
-    topsellingProducts: []
+    topsellingProducts: [],
+    errorArr: [],
+    successfullyUpload: 0,
+    uploadFailed: 0,
+    itemDetails: null
   },
   reducers: {},
   extraReducers: {
@@ -159,7 +175,7 @@ const productsSlice = createSlice({
       state.success = action.payload.message;
     },
     [deleteProduct.rejected]: (state, action) => {
-      state.error = action.payload;
+      state.error = action.payload?.message;
     },
     // addProduct promise states
     [addProduct.pending]: (state, action) => {
@@ -174,11 +190,13 @@ const productsSlice = createSlice({
     },
     // add bulk
     [addBulkProducts.pending]: (state, action) => {
-      console.log('in bulk pending');
       state.isLoading = true;
     },
     [addBulkProducts.fulfilled]: (state, action) => {
       state.isLoading = false;
+      state.errorArr = action?.payload?.data?.errorArr;
+      state.successfullyUpload = action?.payload?.data?.successfullyUpload;
+      state.uploadFailed = action?.payload?.data?.uploadFailed;
       // Success Notification
       notification.success({
         message: 'Success',
@@ -222,7 +240,19 @@ const productsSlice = createSlice({
     [UpdateProduct.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action?.payload?.data?.message;
-    }
+    },
+    // product details
+    [getProductDetails.pending]: (state, action) => {
+      state.isLoading = true
+    },
+    [getProductDetails.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.success = true;
+      state.itemDetails = action?.payload?.data;
+    },
+    [getProductDetails.rejected]: (state, action) => {
+      state.isLoading = false
+    },
   },
 });
 

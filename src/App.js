@@ -2,6 +2,7 @@
 // Library imports
 // import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 // import { ToastContainer } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 // import { useSelector } from 'react-redux'
@@ -20,13 +21,13 @@ import ForgotPassword from './container/auth/ForgotPassword';
 // import ResetPassword from './container/auth/ResetPassword';
 import ShopingBag from './components/shopingBag/ShopingBag';
 import PageNotFound from './components/utils/PageNotFound';
-
+import UserOrderPage from './components/orders/userOrderPage';
 // Redux imports
 
 // Style imports
 
 import './App.css';
-import { useSelector } from 'react-redux';
+
 // import { useSelector } from 'react-redux';
 
 function App() {
@@ -46,7 +47,6 @@ function App() {
 
           <Routes>
             <Route path="/" element={<UserLayout><UserHome /></UserLayout>} />
-            <Route path="/login" exact element={<UserLayout><Login /></UserLayout>} />
             <Route
               path="/shopingbag"
               exact
@@ -56,6 +56,7 @@ function App() {
               path="/checkout"
               element={<UserLayout><ShopingBag heading="Checkout" url="checkout" /></UserLayout>}
             />
+            <Route path="/userorderpage" element={<UserOrderPage />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </>

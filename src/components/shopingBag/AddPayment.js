@@ -9,17 +9,17 @@ import PaymentCard from '../paymentCard';
 import MasterCard from '../../assets/Group.svg';
 import OrderPlaced from '../utils/OrderPlaced';
 // Redux imports
-import { PlaceOrder } from '../../redux/slices/orderSlice';
+import { PlaceOrder, clearSuccess } from '../../redux/slices/orderSlice';
 import { clearCart } from '../../redux/slices/cartSlice';
-import { DeductCharges } from '../../redux/slices/payment-slice';
+import { DeductCharges, GetUserCards } from '../../redux/slices/payment-slice';
 // style imports
 import './addpayment.css';
 //
 const AddPayment = ({ userAddress }) => {
   const [paymentModel, setPaymentModel] = useState(false);
   const [showPaymentCard, setShowPaymentCard] = useState(false);
-  // const [paymentDetails, setPaymentDetails] = useState({});
   const [showOrderPlacedModel, setShowOrderPlacedModel] = useState(false);
+
   const userId = localStorage.getItem('id');
   const userName = localStorage.getItem('name');
   const { items, totalPrice, totalQuantity } = useSelector((state) => state.cartReducer)
@@ -33,7 +33,8 @@ const AddPayment = ({ userAddress }) => {
   const handleClose = () => {
     setPaymentModel(false);
   };
-  // console.log('ADDRESS = ', address[0]);
+  //
+
   //
   const handleCardShow = () => {
     setShowPaymentCard(true);
@@ -44,6 +45,7 @@ const AddPayment = ({ userAddress }) => {
 
   useEffect(() => {
     if (success && !error) {
+      dispatch(clearSuccess())
       dispatch(clearCart());
     }
   }, [success, error]);
@@ -58,6 +60,8 @@ const AddPayment = ({ userAddress }) => {
             cardTitle="Master Card"
             paymentDetails={paymentDetails}
             userAddress={userAddress}
+            imageReq={true}
+            isSelected={false}
           />
         ) : (
           !userAddress?.fullName ? <CustomButton

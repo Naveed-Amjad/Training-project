@@ -78,7 +78,8 @@ const authSlice = createSlice({
         role: null,
         success: null,
         name: null,
-        id: null
+        id: null,
+        email: null
       }
     },
     logout: (state, action) => {
@@ -134,17 +135,26 @@ const authSlice = createSlice({
       }
     },
     [forgotPassword.fulfilled]: (state, action) => {
-      return {
-        ...state,
-        loading: false,
-        success: true
+      if (action?.payload?.error) {
+        notification.error({
+          message: 'error',
+          description: action?.payload?.error,
+          type: 'error',
+          duration: 1.5,
+        });
+      } else {
+        notification.success({
+          message: 'success',
+          description: 'Email sent successfully',
+          type: 'success',
+          duration: 1.5,
+        });
+        return {
+          ...state,
+          loading: false,
+          success: true
+        }
       }
-      // notification.success({
-      //   message: 'Success',
-      //   description: 'Password reset link sent to your email please check.',
-      //   type: 'success',
-      //   duration: 1.5
-      // });
     },
     [forgotPassword.rejected]: (state, action) => {
       return {
@@ -156,7 +166,7 @@ const authSlice = createSlice({
     [resetPassword.pending]: (state) => {
       state.loading = true;
     },
-    [resetPassword.fulfilled]: (state) => {
+    [resetPassword.fulfilled]: (state, { payload }) => {
       state.loading = false;
       state.success = true;
     },

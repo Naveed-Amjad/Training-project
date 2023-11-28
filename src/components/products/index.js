@@ -12,6 +12,7 @@ import CustomTable from '../../components/Table';
 import { Button } from 'react-bootstrap';
 import EditProduct from './editProduct';
 import BulkImportModel from './import-bulk-model';
+import ImportProgress from '../progress/product-progress';
 // Redux imports
 import { getProducts } from '../../redux/slices/productsSlice';
 // style imports
@@ -20,6 +21,9 @@ const Products = () => {
   const [addModel, setAddModel] = useState(false);
   const [bulkModel, setBulkModel] = useState(false);
   const [file, setFile] = useState();
+  const [fileName, setFileName] = useState();
+  const [showProgress, setShowProgress] = useState(false);
+
   const dispatch = useDispatch();
   const data = useSelector((state) => state.productsReducer?.products);
   //
@@ -47,12 +51,12 @@ const Products = () => {
     { Text: 'Actions', hasArrow: false },
   ];
 
-  // retrun
   return (
     <>
       <div className="d-flex justify-content-between">
         <div>
           {error && <h1>{error}</h1>}
+          {showProgress && <ImportProgress fileName={fileName} setShowProgress={setShowProgress} show={showProgress} />}
           <div className="add_product">
             <div
               style={{
@@ -85,7 +89,7 @@ const Products = () => {
                     onClose={() => setAddModel(false)}
                   />
                 )}
-                <BulkImportModel show={bulkModel} onClose={() => setBulkModel(false)} />
+                <BulkImportModel setFileName={setFileName} show={bulkModel} onClose={() => setBulkModel(false)} setShowProgress={setShowProgress} />
               </div>
             </div>
           </div>

@@ -20,10 +20,14 @@ export const PlaceOrder = createAsyncThunk('placeorder', async (data, { rejectWi
 export const GetOrders = createAsyncThunk('getorder', async (data, { rejectWithValue }) => {
   try {
     const Data = { searchById: data }
+    console.log('\n\n data ==>> ', data);
     const response = await axios({
       method: 'post',
       url: 'http://localhost:4009/v1/getorders',
-      data: Data
+      data,
+      headers: {
+        Authorization: `Bearer ${data.token}`
+      }
     })
     return response;
   } catch (error) {
@@ -36,7 +40,10 @@ export const UserOrders = createAsyncThunk('userorders', async (data, { rejectWi
     const response = await axios({
       method: 'POST',
       url: 'http://localhost:4009/v1/userorders',
-      data
+      data: { orderId: data.userId, skip: data.skip, limit: data.limit },
+      headers: {
+        Authorization: `Bearer ${data.token}`
+      }
     })
     return response;
   } catch (error) {
@@ -46,11 +53,26 @@ export const UserOrders = createAsyncThunk('userorders', async (data, { rejectWi
 // deliver order
 export const DeliverOrder = createAsyncThunk('deliverorder', async (data, { rejectWithValue }) => {
   try {
-    console.log('DATA ID = ', data);
     const response = await axios({
       method: 'POST',
       url: 'http://localhost:4009/v1/deliverorder',
       data
+    })
+    return response;
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+})
+// admin order details
+export const AdminOrderDetails = createAsyncThunk('AdminOrderDetails', async (data, { rejectWithValue }) => {
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: 'http://localhost:4009/v1/order-details',
+      params: data,
+      headers: {
+        Authorization: `Bearer ${data.token}`
+      }
     })
     return response;
   } catch (error) {
@@ -65,11 +87,19 @@ const orderSlice = createSlice({
     error: null,
     success: null,
     orders: [],
-    userOrders: []
+    userOrders: [],
+    adminOrderDetails: null,
+    totalCount: 0
   },
   reducers: {
     SetState(state, { payload: { field, value } }) {
       state[field] = value;
+    },
+    clearSuccess: (state, action) => {
+      state.success = null
+    },
+    clearUserOrderState: (state, action) => {
+      state.userOrders = null
     }
   },
   extraReducers: {
@@ -106,9 +136,10 @@ const orderSlice = createSlice({
     [UserOrders.pending]: (state) => {
       state.loading = true;
     },
-    [UserOrders.fulfilled]: (state, action) => {
+    [UserOrders.fulfilled]: (state, { payload: { data } }) => {
       state.loading = false;
-      state.userOrders = action.payload?.data;
+      state.userOrders = data?.orders;
+      state.totalCount = data?.totalDocuments;
     },
     [UserOrders.rejected]: (state, action) => {
       state.loading = false;
@@ -132,7 +163,19 @@ const orderSlice = createSlice({
       state.loading = false;
       state.error = action.payload?.response?.data;
     },
+    // AdminOrderDetails
+    [AdminOrderDetails.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [AdminOrderDetails.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.success = true;
+      state.adminOrderDetails = action?.payload?.data;
+    },
+    [AdminOrderDetails.rejected]: (state, action) => {
+      state.loading = false;
+    },
   }
 })
-
+export const { clearUserOrderState, clearSuccess } = orderSlice.actions;
 export default orderSlice.reducer;

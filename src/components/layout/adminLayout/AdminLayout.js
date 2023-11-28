@@ -8,9 +8,6 @@ import './style.css'
 const AdminLayout = ({ children }) => {
   return (
     <>
-      {
-        console.log('Entered in admin layout')
-      }
       <CustomNavbar />
       <div style={{ paddingTop: '62px' }} className='d-flex'>
         <CustomSideBar />

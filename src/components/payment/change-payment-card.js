@@ -1,22 +1,42 @@
 // library imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Offcanvas } from 'react-bootstrap';
 // component imports
+import PaymentCard from '../paymentCard';
+import MasterCard from '../../assets/Group.svg';
 import CustomInput from '../../components/input';
 import CustomButton from '../button';
+import VisaCard from '../../assets/visa.svg';
 // Redux imports
 import { paymentDetails } from '../../redux/slices/cartSlice';
-import { AddCustomer } from '../../redux/slices/payment-slice';
+import { AddCustomer, GetUserCards } from '../../redux/slices/payment-slice';
 // style imports
 
 //
-const ChangePaymentMethodModel = ({ onClose, setPaymentDetails }) => {
+const ChangePaymentMethodModel = ({
+  onClose,
+  setPaymentDetails,
+  setCardIndex,
+  setCardNumberForImage
+}) => {
   const [cardNumber, setCardNumber] = useState();
   const [expiryDate, setExpiryDate] = useState();
   const [country, setCountry] = useState();
+  const [selectedCard, setSelectedCard] = useState();
+  const dispatch = useDispatch();
+  const email = useSelector((state) => state.authReducer?.email);
 
-  const email = useSelector((state) => state.authReducer?.email)
+  const stripeId = useSelector((state) => state.paymentReducer?.customerId);
+
+  const userCards = useSelector(
+    (state) => state.paymentReducer?.userCards?.data
+  );
+  console.log('\n\n userCards ', userCards);
+
+  useEffect(() => {
+    dispatch(GetUserCards({ stripeId }));
+  }, [stripeId]);
 
   const cardNumberHandler = (e) => {
     setCardNumber(e.target.value);
@@ -27,10 +47,18 @@ const ChangePaymentMethodModel = ({ onClose, setPaymentDetails }) => {
   const countryHandler = (e) => {
     setCountry(e.target.value);
   };
-  const dispatch = useDispatch();
+
   const onSaveHandler = () => {
-    dispatch(paymentDetails({ cardNumber, expiryDate, country }))
-    dispatch(AddCustomer({ email, cvc: '1234', cardNumber, expiraryMonth: '12', expiraryYear: '25' }));
+    dispatch(paymentDetails({ cardNumber, expiryDate, country }));
+    dispatch(
+      AddCustomer({
+        email,
+        cvc: '1234',
+        cardNumber,
+        expiraryMonth: '12',
+        expiraryYear: '25',
+      })
+    );
   };
   const style = { width: '664px', marginTop: '1px' };
   const style1 = { width: '300px', marginTop: '1px' };
@@ -42,11 +70,36 @@ const ChangePaymentMethodModel = ({ onClose, setPaymentDetails }) => {
         onHide={() => onClose()}
         placement="end"
       >
-        {/* <Button variant="primary" onClick={handleClose} className="me-2">Edit Product</Button> */}
         <Offcanvas.Header>
           <Offcanvas.Title> Add Payment Method </Offcanvas.Title>
         </Offcanvas.Header>
         <div className="line"></div>
+        <div className="d-flex">
+          {userCards?.length &&
+            userCards.map((card, index) => {
+              return (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setSelectedCard(card.brand);
+                    setCardIndex(index);
+                    setCardNumberForImage(card?.last4);
+                    console.log('\n CARD = ', card);
+                    console.log('\n\n userCards?.[0]?.brand ', userCards?.[0]?.brand)
+                  }}
+                >
+                  <PaymentCard
+                    isSelected={selectedCard}
+                    card={card}
+                    cardNumber={card?.last4}
+                    image={userCards?.[0]?.brand === 'Visa' ? VisaCard : MasterCard}
+                    cardTitle={card.brand === 'Visa' ? 'Visa Card' : 'Master Card'}
+                    imageReq={false}
+                  />
+                </div>
+              );
+            })}
+        </div>
         <Offcanvas.Body>
           <CustomInput
             type="text"
@@ -71,10 +124,6 @@ const ChangePaymentMethodModel = ({ onClose, setPaymentDetails }) => {
               onChange={countryHandler}
             />
           </div>
-          {/* <div className='d-flex justify-content-between'>
-            <CustomInput type='text' placeholder='Province' lable='Province' style={style1} />
-            <CustomInput type='text' placeholder='City' lable='City' style={style1} />
-          </div> */}
           <CustomInput
             type="text"
             placeholder="Country"
@@ -84,11 +133,6 @@ const ChangePaymentMethodModel = ({ onClose, setPaymentDetails }) => {
           {!(cardNumber && expiryDate && country) ? (
             <CustomButton
               isEnabledbtn={true}
-              // onClick={() => {
-              //   onClose();
-              //   onClick();
-              //   onSaveHandler();
-              // }}
               style={{
                 height: '46px',
                 width: '161px',

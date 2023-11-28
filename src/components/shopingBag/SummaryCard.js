@@ -25,10 +25,13 @@ const SummaryCard = (props) => {
         <div style={{ margin: '10px 0px 0px 20px' }}>Tax</div>
         <div style={{ marginRight: '20px', marginTop: '10px' }}>{taxAmount}</div>
       </div>
-      <div className='xyz'>
-        <div style={{ margin: '10px 0px 0px 20px' }}>Delivery charges</div>
-        <div style={{ marginRight: '20px', marginTop: '10px' }}>{deliveryCharges}</div>
-      </div>
+      {
+        window.location.pathname !== '/shopingbag'
+          ? <div className='xyz'>
+            <div style={{ margin: '10px 0px 0px 20px' }}>Delivery charges</div>
+            <div style={{ marginRight: '20px', marginTop: '10px' }}>{deliveryCharges}</div>
+          </div>
+          : ''}
       <div className='xyz'>
         <div style={{ margin: '10px 0px 0px 20px' }}>Total</div>
         <div style={{ marginRight: '20px', marginTop: '10px' }}>{deliveryCharges + taxAmount + totalPrice}</div>

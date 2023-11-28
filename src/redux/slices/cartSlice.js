@@ -26,6 +26,8 @@ const cartSlice = createSlice({
     totalPrice: 0,
     totalQuantity: null,
     address: {},
+    color: null,
+    size: null,
     paymentDetails: {}
   },
   reducers: {
@@ -39,19 +41,36 @@ const cartSlice = createSlice({
         paymentDetails: {}
       }
     },
+    addSizeAndColor: (state, { payload }) => {
+      state.color = payload.color;
+      state.size = payload.size;
+    },
     addItem: (state, action) => {
-      var itemToAdd = action.payload;
+      const itemToAdd = action.payload;
       const cartItems = current(state.items).map(item => item);
       const existingItemIndex = cartItems.findIndex(
         (item) => item.product._id === itemToAdd.product?._id
       );
 
       if (existingItemIndex !== -1) {
-        const cartItem = { ...cartItems[existingItemIndex] };
-        cartItem.quantity = cartItem.quantity + itemToAdd.quantity;
-        cartItems[existingItemIndex] = cartItem;
+        if (cartItems[existingItemIndex]?.product?.stock >= itemToAdd.quantity + cartItems[existingItemIndex]?.quantity) {
+          const cartItem = { ...cartItems[existingItemIndex] };
+          cartItem.quantity = cartItem.quantity + itemToAdd.quantity;
+          cartItems[existingItemIndex] = cartItem;
+        } else {
+          notification.warning({
+            message: 'warning',
+            description: `Currently we have only ${cartItems[existingItemIndex]?.product?.stock} items in stock`,
+            type: 'error',
+          });
+        }
       } else {
-        cartItems.push({ product: itemToAdd.product, quantity: itemToAdd.quantity });
+        cartItems.push({
+          product: itemToAdd.product,
+          quantity: itemToAdd.quantity,
+          color: state.color,
+          size: state.size
+        });
       }
 
       state.items = cartItems;
@@ -59,7 +78,7 @@ const cartSlice = createSlice({
       state.totalPrice = calculateTotal(state.items);
     },
     removeItem: (state, action) => {
-      var itemToAdd = action.payload;
+      const itemToAdd = action.payload;
       const existingItemIndex = state.items.findIndex(
         (item) => item.product?._id === itemToAdd.item?.product?._id
       );
@@ -74,7 +93,7 @@ const cartSlice = createSlice({
       state.totalPrice = calculateTotal(state.items);
     },
     increaseQuantity: (state, action) => {
-      var itemToAdd = action.payload;
+      const itemToAdd = action.payload;
       const existingItemIndex = state.items.findIndex(
         (item) => item.product?._id === itemToAdd.item?.product._id
       );
@@ -89,7 +108,7 @@ const cartSlice = createSlice({
       state.totalPrice = calculateTotal(state.items);
     },
     removeItems: (state, action) => {
-      var itemToRemove = action.payload;
+      const itemToRemove = action.payload;
       state.items = state.items.filter((item) => item?.product?._id !== itemToRemove?.product?._id);
       state.totalQuantity = calculateTotalQuantity(state.items);
       state.totalPrice = calculateTotal(state.items);
@@ -117,6 +136,16 @@ const cartSlice = createSlice({
   },
 });
 
-export const { resetState, addItem, removeItem, removeItems, increaseQuantity, clearCart, addAddress, paymentDetails } = cartSlice.actions;
+export const {
+  resetState,
+  addItem,
+  removeItem,
+  removeItems,
+  increaseQuantity,
+  clearCart,
+  addAddress,
+  paymentDetails,
+  addSizeAndColor
+} = cartSlice.actions;
 
 export default cartSlice.reducer;

@@ -25,21 +25,13 @@ const Dashbord = () => {
   const totalPaidOrders = useSelector(
     (state) => state.dashboardStatsReducer?.data?.totalPaidOrders
   );
-  console.log('🚀 ~ file: index.js:28 ~ Dashbord ~ totalPaidOrders:', totalPaidOrders)
   const totalUnpaidOrders = useSelector(
     (state) => state.dashboardStatsReducer?.data?.totalUnpaidOrders
   );
-  console.log('🚀 ~ file: index.js:32 ~ Dashbord ~ totalUnpaidOrders:', totalUnpaidOrders)
   const oneYearStats = useSelector(
     (state) => state.dashboardStatsReducer?.data?.oneYearStats
   );
-  console.log('\n\n OneYearStats ', oneYearStats, totalPaidOrders);
 
-  const data = [
-    { name: 'Group A', value: totalPaidOrders },
-    { name: 'Group B', value: totalUnpaidOrders },
-  ];
-  console.log('\n\n\n DATA = ', data);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getDashboardStats());
@@ -51,22 +43,23 @@ const Dashbord = () => {
   const todayStats = stats?.todayStats;
   const sevenDayStats = stats?.sevenDayStats;
   const thirtyDayStats = stats?.thirtyDayStats;
-  console.log('\n\n todayStats ', todayStats);
-  console.log('\n\n todayStats ', sevenDayStats);
-  console.log('\n\n todayStats ', thirtyDayStats);
+
   const LineChartData = oneYearStats?.map((entry) => ({
     name: entry.month,
     orders: entry.totalOrders || 0,
     sales: entry.totalSales || 0,
   }));
 
+  const data = [
+    { name: 'Group A', value: totalPaidOrders },
+    { name: 'Group B', value: totalUnpaidOrders },
+  ];
   // colors
   const colors = ['#5366FF', '#5DDC6B', '#5DD56B'];
   // top selling heading
   const heading = [
     { Text: 'Title', hasArrow: true },
     { Text: 'Units', hasArrow: true },
-    // eslint-disable-next-line indent
     { Text: 'Amount', hasArrow: true },
   ];
   //
@@ -82,25 +75,25 @@ const Dashbord = () => {
           <div className="total">
             <p style={{ marginLeft: '-10px' }}>
               {todayStats
-                ? `Total Products: ${todayStats?.totalOrders}`
-                : `Total Products: ${0}`}
+                ? `Total Products: $${todayStats?.totalOrders}`
+                : `Total Products: $${0}`}
             </p>
             <p>
               {todayStats
-                ? `Total Orders: ${todayStats?.totalOrders}`
-                : `Total Orders: ${0}`}
+                ? `Total Orders: $${todayStats?.totalOrders}`
+                : `Total Orders: $${0}`}
             </p>
           </div>
           <div className="total">
             <p style={{ marginLeft: '-28px' }}>
               {todayStats
-                ? `Total Units: ${todayStats?.totalUnits}`
-                : `Total Units: ${0}`}
+                ? `Total Units: $${todayStats?.totalUnits}`
+                : `Total Units: $${0}`}
             </p>
             <p>
               {todayStats
-                ? `Total Sales: ${todayStats?.totalSales}`
-                : `Total Sales: ${0}`}
+                ? `Total Sales: $${todayStats?.totalSales}`
+                : `Total Sales: $${0}`}
             </p>
           </div>
         </div>

@@ -3,13 +3,15 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
+import { notification } from 'antd'
 // component imports
 import ReactButton from '../../button';
 import FilterDropdown from '../../utils/filtersComponent';
 import UserCard from './UserCard';
+import Load from '../../../assets/Load.svg';
 // Redux imports
-import { getProducts } from '../../../redux/slices/productsSlice';
-import { addItem } from '../../../redux/slices/cartSlice';
+import { getProducts, getProductDetails } from '../../../redux/slices/productsSlice';
+import { addItem, addSizeAndColor } from '../../../redux/slices/cartSlice';
 import { GetNotifications } from '../../../redux/slices/notification-slice';
 // style imports
 import './userHome.css';
@@ -18,28 +20,39 @@ import './userHome.css';
 const UserHome = () => {
   const products = useSelector((state) => state.productsReducer.products);
   const { token } = useSelector((state) => state.authReducer);
-
-  const [itemDetails, setItemDetails] = useState({});
+  const { itemDetails } = useSelector((state) => state?.productsReducer);
+  // const [itemDetails, setItemDetails] = useState({});
   const [priceObject, setPriceObject] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [searchName, setSearchName] = useState('');
   const [colorFilter, setColorFilter] = useState('');
+  const [sizeFilter, setSizeFilter] = useState();
+  const [sizeName, setSizeName] = useState();
   const [sortFilter, setSortFilter] = useState();
   const [colorName, setColorName] = useState();
+  const [next, setNext] = useState(8);
   const [filters, setFilters] = useState([]);
+  const [productColor, setProductColor] = useState('');
+  const [productSize, setProductSize] = useState('');
+  const [productId, setProductId] = useState();
+  const [stock, setStock] = useState();
   const dispatch = useDispatch();
   const nav = useNavigate();
 
-  const userId = localStorage.getItem('id')
+  const userId = localStorage.getItem('id');
+  const role = useSelector((state) => state.authReducer.role);
 
   useEffect(() => {
-    console.log('\n\n\nFilter changed ', filters);
     dispatch(getProducts(filters)).then(({ payload }) => {
       if (payload?.data?.length) {
-        setItemDetails(payload?.data[0]);
+        dispatch(getProductDetails({ productId: payload?.data[0]._id }))
       }
     });
   }, [filters]);
+
+  useEffect(() => {
+    dispatch(GetNotifications({ userId }))
+  }, [])
 
   const quantityDecreaseHandler = () => {
     if (quantity > 1) {
@@ -49,6 +62,20 @@ const UserHome = () => {
       disabledbtn.disabled = true;
     }
   };
+
+  const quantityIncreaseHandler = () => {
+    if (quantity >= itemDetails?.stock) {
+      const disabledbtn = document.getElementById('increasebtn');
+      disabledbtn.disabled = true;
+      notification.warning({
+        message: 'warning',
+        description: `Currently we have only ${itemDetails?.stock} items in stock`,
+        type: 'error',
+      });
+    } else {
+      setQuantity(quantity + 1);
+    }
+  }
 
   const handleSortFilter = (value) => {
     setSortFilter(value);
@@ -65,6 +92,15 @@ const UserHome = () => {
       color: value
     })
   }
+
+  const handleSizeFilter = (value) => {
+    setSizeFilter(value);
+    setSizeName(value);
+    setFilters({
+      ...filters,
+      size: value
+    })
+  }
   const handlePriceFilter = (min, max) => {
     setPriceObject({
       minPrice: min,
@@ -76,6 +112,33 @@ const UserHome = () => {
       maxPrice: max,
     });
   };
+
+  const sizeArr = [
+    {
+      title: 'XS',
+      onClick: () => handleSizeFilter('XS')
+    },
+    {
+      title: 'S',
+      onClick: () => handleSizeFilter('S')
+    },
+    {
+      title: 'M',
+      onClick: () => handleSizeFilter('M')
+    },
+    {
+      title: 'L',
+      onClick: () => handleSizeFilter('L')
+    },
+    {
+      title: 'XL',
+      onClick: () => handleSizeFilter('XL')
+    },
+    {
+      title: 'Clear Filter',
+      onClick: () => handleSizeFilter('')
+    }
+  ]
   const colorArr = [
     {
       title: 'Black',
@@ -97,6 +160,10 @@ const UserHome = () => {
       title: 'Orange',
       onClick: () => handleColorFilter('Orange')
     },
+    {
+      title: 'Clear Filter',
+      onClick: () => handleColorFilter('')
+    }
   ]
   const arr = [
     {
@@ -126,6 +193,10 @@ const UserHome = () => {
     {
       title: '2000 & Above',
       onClick: () => handlePriceFilter(2000, 1000000)
+    },
+    {
+      title: 'Clear Filter',
+      onClick: () => handlePriceFilter('', '')
     }
   ];
 
@@ -148,7 +219,7 @@ const UserHome = () => {
   ];
 
   const handleDetails = (data) => {
-    setItemDetails(data);
+    // setItemDetails(data);
     // setCartItem(data);
   };
   const handleSearch = debounce((e) => {
@@ -164,11 +235,19 @@ const UserHome = () => {
   // const title = priceObject.maxPrice ? priceObject.minPrice - priceObject.maxPrice : 'Price'
   const title = (sortFilter === undefined || sortFilter === 0) ? 'Default sort' : sortFilter === -1 ? 'High to low' : 'Low to High';
   const colorTitle = colorName || 'Color';
+  const sizeTitle = sizeName || 'Size'
   return (
     <div className="">
       <div className="filters">
         <div className="filter_divs justify-content-center">
           <span className="heading">Products</span>
+        </div>
+        <div>
+          <FilterDropdown
+            style={{ width: '90px', height: '35px', margin: '30px' }}
+            title={sizeTitle}
+            list={sizeArr}
+          />
         </div>
         <div>
           <FilterDropdown
@@ -194,7 +273,7 @@ const UserHome = () => {
           />
         </div>
         <div className="filter_divs">
-          <h6 className="mt-2 ms-2">
+          <h6 className="mt-2 ">
             Search{' '}
             <input
               className="custom-search-bar"
@@ -207,23 +286,30 @@ const UserHome = () => {
       </div>
       <div style={{ paddingTop: '130px' }} className="cards_div">
         <div className="cards_side">
-          {products.length
-            ? products.map((data, index) => (
-              <UserCard
+          {products?.length
+            ? <> {products.map((data, index) => {
+              return (index < next && <UserCard
                 key={index}
                 product={data}
                 handleDetails={handleDetails}
-              />
-            ))
+                setStock={setStock}
+              // setProductId={setProductId}
+              />);
+            }
+            )}
+              {products?.length > next ? <img src={Load} onClick={() => setNext((num) => num + 8)} style={{ height: '35px', width: '100px', margin: '0px 0px 0px 250px' }} /> : ''}
+            </>
             : <div style={{ margin: '200px 0px 0px 300px', color: 'blue' }}><h3>No Products to Show</h3></div>}
         </div>
-        {products.length ? <div className="details_dev">
+        {products?.length ? <div className="details_dev">
           <div className="pic_buttons">
             <div className="image">
               <img
                 src={
-                  itemDetails?.images
-                    ? `http://localhost:4009/${itemDetails?.images[0][0]}`
+                  itemDetails?.images?.length
+                    ? typeof (itemDetails?.images?.[0]) === 'object'
+                      ? `http://localhost:4009/${itemDetails?.images[0][0]}`
+                      : `http://localhost:4009/${itemDetails?.images[0]}`
                     : ''
                 }
                 style={{ height: '350px', width: '330px' }}
@@ -241,16 +327,15 @@ const UserHome = () => {
                   {
                     colorArray?.map((color, index) => {
                       return (
-                        <div key={index} className="color_img_div">
-                          <div
+                        <div key={index} className={color === productColor ? 'color_img_div border-danger' : 'color_img_div'}>
+                          <div onClick={() => setProductColor(color)}
                             style={{
                               height: '28px',
                               width: '28px',
                               background: color,
-                              padding: '6px',
+                              padding: '6px'
                             }}
                           >
-                            {/* {color} */}
                           </div>
                         </div>
                       )
@@ -263,8 +348,8 @@ const UserHome = () => {
                     {
                       SizeArray?.map((size, index) => {
                         return (
-                          <div key={index} className="size_div_child">
-                            <div
+                          <div key={index} className={productSize === size ? 'size_div_child border-danger' : 'size_div_child'}>
+                            <div onClick={() => setProductSize(size)}
                               style={{
                                 height: '28px',
                                 width: '28px',
@@ -303,16 +388,21 @@ const UserHome = () => {
               >
                 -
               </span>
-              <span className="number_span px-4 pt-1">{quantity}</span>
-              <span className="sign" id='increasebtn' onClick={() => setQuantity(quantity + 1)}>
+              <span className="number_span px-4 pt-1">{itemDetails?.stock > 0 ? quantity : 0}</span>
+              <span className="sign" id='increasebtn' onClick={() => quantityIncreaseHandler()}>
                 +
               </span>
             </div>
           </div>
           <ReactButton
+            isEnabledbtn={!(productColor && productSize && itemDetails?.stock)}
             className="cart_btn"
             placeholder="Add to Cart"
             onClick={() => {
+              dispatch(addSizeAndColor({
+                color: productColor,
+                size: productSize
+              }))
               // setCartItem(products[0])
               if (itemDetails) {
                 dispatch(addItem({ product: itemDetails, quantity }));

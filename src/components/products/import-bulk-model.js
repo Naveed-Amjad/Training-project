@@ -3,17 +3,19 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 // component imports
 import CustomButton from '../../components/button';
+import ImportProgress from '../progress/product-progress';
 // redux imports
 import { addBulkProducts, getProducts } from '../../redux/slices/productsSlice';
 // style imports
 import './bulk-product.css';
 //
-function BulkImportModel({ show, onClose }) {
+function BulkImportModel({ show, onClose, setShowProgress, setFileName }) {
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [showBulkModel, setShowBulkModel] = useState(false);
   const [close, setClose] = useState(show)
   const [fileData, setFileData] = useState(null);
   const [bulkProducts, setBulkProducts] = useState([]);
+  // const [showProgress, setShowProgress] = useState(false);
 
   const fileReader = new FileReader();
 
@@ -24,7 +26,6 @@ function BulkImportModel({ show, onClose }) {
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      console.log('Selected file:', file);
       setFileData(file);
       const newBulkProducts = [];
       fileReader.onload = function (event) {
@@ -48,12 +49,11 @@ function BulkImportModel({ show, onClose }) {
       fileReader.readAsText(file);
     }
   };
-  console.log('bulkProducts ', bulkProducts);
 
   const dispatch = useDispatch();
   const handleSave = () => {
     dispatch(addBulkProducts(bulkProducts)).then(() => dispatch(getProducts()));
-    console.log('\n saved');
+    setShowProgress(true);
     onClose();
   };
   return (
@@ -64,22 +64,6 @@ function BulkImportModel({ show, onClose }) {
             <div className="bulk-model-main">
               <div className="bulk-header-content">
                 <p className="bulk-header">Import Bulk Products</p>
-                {/* <svg
-                  onClick={() => { setClose(false) }}
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="close-bulk"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M14.5468 12L21 18.4532L18.4532 21L12 14.5468L5.54685 21L3 18.4532L9.45316 12L3 5.54685L5.54685 3L12 9.45316L18.4532 3L21 5.54685L14.5468 12Z"
-                    fill="#495057"
-                  />
-                </svg> */}
                 <CustomButton onClick={() => onClose()} style={{ height: '40px', width: '30px', backgroundColor: 'white', color: 'black', border: 'none', margin: '10px 0px 0px 350px' }} placeholder='X' />
               </div>
               <div className="import-file-container">
@@ -119,9 +103,10 @@ function BulkImportModel({ show, onClose }) {
                   </p>
                 </div>
               </div>
+              {/* {showProgress && <ImportProgress show={true} />} */}
               <div className="bulk-model-last">
                 {fileData !== null ? (
-                  <p className="bulk-file-choose">File: {fileData.name}</p>
+                  <p className="bulk-file-choose">File: {fileData.name} {setFileName(fileData.name)}</p>
                 ) : (
                   <p className="bulk-file-choose">No File Choosen</p>
                 )}

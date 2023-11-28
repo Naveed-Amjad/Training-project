@@ -1,13 +1,18 @@
 // library imports
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { notification } from 'antd';
 // component imports
 // import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Input from '../input/index';
 import CustomButton from '../../components/button';
 // Redux imports
-import { addProduct, getProducts, UpdateProduct } from '../../redux/slices/productsSlice';
+import {
+  addProduct,
+  getProducts,
+  UpdateProduct,
+} from '../../redux/slices/productsSlice';
 // style imports
 import ArrowLeft from '../../assets/ArrowLeft.svg';
 import CloudArrow from '../../assets/CloudArrow.svg';
@@ -21,13 +26,15 @@ import './editProduct.css';
 const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
   const [imageBase64, setImageBase64] = useState();
   const [productName, setProductName] = useState(editObject?.title || '');
-  const [productPrice, setProductPrice] = useState(editObject?.price || ' ');
-  const [productQuantity, setProductQuantity] = useState(editObject?.stock || ' ');
+  const [productPrice, setProductPrice] = useState(editObject?.price || '');
+  const [productQuantity, setProductQuantity] = useState(
+    editObject?.stock || ' '
+  );
   const [productColor, setProductColor] = useState(editObject?.color || ' ');
   const [productBrand, setProductBrand] = useState(editObject?.brand || '');
   const [description, setDescription] = useState(editObject?.description || '');
   const [pro, setPro] = useState({
-    images: editObject?.images || []
+    images: [],
   });
 
   // const id = editObject._id;
@@ -43,7 +50,7 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
       const reader = new FileReader();
       setPro((prev) => ({
         ...prev,
-        images: [...(prev?.images) || [], file]
+        images: [...(prev?.images || []), file],
       }));
 
       reader.onload = (e) => {
@@ -59,10 +66,26 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
   };
 
   const handlePrice = (e) => {
-    setProductPrice(e.target.value);
+    if (e.target.value < 0) {
+      notification.error({
+        message: 'error',
+        description: 'Price cannot be negative value',
+        type: 'error',
+      });
+    } else {
+      setProductPrice(e.target.value);
+    }
   };
   const handleQuantity = (e) => {
-    setProductQuantity(e.target.value);
+    if (e.target.value < 0) {
+      notification.error({
+        message: 'error',
+        description: 'Stock can not be negative',
+        type: 'error',
+      });
+    } else {
+      setProductQuantity(e.target.value);
+    }
   };
   const handleColor = (e) => {
     setProductColor(e.target.value);
@@ -109,7 +132,6 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
                 )}{' '}
                 <br></br> or
               </div>
-              {/* <Button style={{ height: '36px', width: '141px' }}>Browse</Button> */}
               <Input type="file" onChange={handleImageChange} />
             </div>
             <div className="name_size">
@@ -121,15 +143,6 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
                 onChange={handleProductName}
                 value={productName}
               />
-              <h6 style={{ marginTop: '16px' }}>Size</h6>
-              <dive className="size_div">
-                {size.map((size, index) => (
-                  <div className="size_box" key={index}>
-                    {' '}
-                    {size}{' '}
-                  </div>
-                ))}
-              </dive>
             </div>
           </div>
           {
@@ -139,32 +152,14 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
           }
           <div className="lower_part">
             <div className="pictures">
-              {
-                pro?.images?.map((image) => (
-                  <img
-                    style={{ width: '50px', height: '50px' }}
-                    // onLoad={({ currentTarget }) => {
-                    //   console.log('in load');
-                    //   currentTarget.onload = null;
-                    //   if (currentTarget.src !== `http://localhost:4009/${image}`) {
-                    //     currentTarget.src = `http://localhost:4009/${image}`;
-                    //   }
-                    // }}
-                    // onError={({ currentTarget }) => {
-                    //   console.log('in error');
-                    //   currentTarget.onerror = null;
-                    //   if (currentTarget.src !== imageBase64) {
-                    //     currentTarget.src = imageBase64;
-                    //     currentTarget.alt = 'Picture'
-                    //   }
-                    // }}
-                    src={`http://localhost:4009/${image}`}
-                    // src={`http://localhost:4009/${image}`}
-                    // alt='Pic'
-                    key={image}
-                  />
-                ))
-              }
+              {pro?.images?.map((image) => (
+                <img
+                  style={{ width: '50px', height: '50px' }}
+                  src={`http://localhost:4009/${image}`}
+                  alt="picture"
+                  key={image}
+                />
+              ))}
               <div
                 style={{
                   height: '50px',
@@ -172,42 +167,10 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
                   marginLeft: '20px',
                   marginTop: '20px',
                 }}
-              >
-
-              </div>
-              {/* <div style={{ height: '50px', width: '50px', marginTop: '20px' }}>
-                <img src={image2} />
-              </div>
-              <div
-                style={{ height: '50px', width: '50px', marginLeft: '20px' }}
-              >
-                <img src={image3} />
-              </div>
-              <div style={{ height: '50px', width: '50px' }}>
-                <img src={image4} />
-              </div> */}
-
+              ></div>
             </div>
             <div className="color_price">
               <h6 style={{ marginTop: '19px' }}>Color</h6>
-              <dive className="color_div">
-                {color.map((color, index) => (
-                  <div
-                    style={{
-                      height: '30px',
-                      width: '40px',
-                      background: `${color}`,
-                      border: '1px solid #DFDFDF',
-                      padding: '10px 10px',
-                      marginLeft: '18px',
-                    }}
-                    key={index}
-                  >
-                    {' '}
-                  </div>
-                ))}
-              </dive>
-              {/* <div className=''> */}
               <Input
                 type="number"
                 placeholder="$00.00"
@@ -215,14 +178,16 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
                 id="price"
                 onChange={handlePrice}
                 value={productPrice}
+                min='1'
               />
               <Input
                 type="number"
-                placeholder="100"
+                placeholder="0"
                 lable="Quantity"
                 id="quantity"
                 onChange={handleQuantity}
                 value={productQuantity}
+                min='1'
               />
               <Input
                 type="text"
@@ -258,17 +223,30 @@ const EditProduct = ({ onClose, heading, btnHeading, editObject }) => {
                 }}
                 onClick={() => {
                   console.log('add handler executed.');
-                  !editObject?._id ? dispatch(
-                    addProduct({
-                      title: productName,
-                      brand: productBrand,
-                      stock: productQuantity,
-                      price: productPrice,
-                      description,
-                      images: pro.images,
-                      color: productColor,
-                    })
-                  ).then(() => dispatch(getProducts())) : dispatch(UpdateProduct({ _id: editObject._id, title: productName, brand: productBrand, stock: productQuantity, price: productPrice, description, color: productColor })).then(() => dispatch(getProducts()));
+                  !editObject?._id
+                    ? dispatch(
+                      addProduct({
+                        title: productName,
+                        brand: productBrand,
+                        stock: productQuantity,
+                        price: productPrice,
+                        description,
+                        images: pro.images,
+                        color: productColor,
+                      })
+                    ).then(() => dispatch(getProducts()))
+                    : dispatch(
+                      UpdateProduct({
+                        _id: editObject._id,
+                        title: productName,
+                        brand: productBrand,
+                        stock: productQuantity,
+                        price: productPrice,
+                        description,
+                        images: pro.images,
+                        color: productColor,
+                      })
+                    ).then(() => dispatch(getProducts()));
                   handleClose();
                 }}
               />

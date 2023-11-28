@@ -28,6 +28,19 @@ export const DeductCharges = createAsyncThunk('deductCharges', async (data, { re
   }
 })
 
+export const GetUserCards = createAsyncThunk('GetUserCards', async (data, { rejectWithValue }) => {
+  try {
+    const response = await axios({
+      method: 'POST',
+      url: 'http://localhost:4009/v1/usercards',
+      data
+    })
+    return response;
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+})
+
 const paymentSlice = createSlice({
   name: 'paymentSlice',
   initialState: {
@@ -35,7 +48,8 @@ const paymentSlice = createSlice({
     customerId: null,
     success: null,
     error: null,
-    isLoading: false
+    isLoading: false,
+    userCards: []
   },
   reducers: {},
   extraReducers: {
@@ -76,6 +90,19 @@ const paymentSlice = createSlice({
     },
     [DeductCharges.rejected]: (state, action) => {
       state.error = action?.payload?.error;
+    },
+    // GetUserCards
+    [GetUserCards.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [GetUserCards.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.success = true;
+      state.userCards = action?.payload?.data;
+    },
+    [GetUserCards.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.success = false;
     }
   }
 })
