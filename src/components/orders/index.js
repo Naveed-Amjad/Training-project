@@ -226,7 +226,7 @@ const Orders = () => {
               ))}
             </Pagination>
             <CustomButton
-              isEnabledbtn={currentPage <= pages}
+              isEnabledbtn={currentPage === pages}
               onClick={() => setCurrentPage(currentPage + 1)}
               style={{ height: '40px', width: '80px', marginLeft: '15px' }}
               placeholder='Next'

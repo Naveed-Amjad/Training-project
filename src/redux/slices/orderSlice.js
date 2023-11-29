@@ -20,7 +20,6 @@ export const PlaceOrder = createAsyncThunk('placeorder', async (data, { rejectWi
 export const GetOrders = createAsyncThunk('getorder', async (data, { rejectWithValue }) => {
   try {
     const Data = { searchById: data }
-    console.log('\n\n data ==>> ', data);
     const response = await axios({
       method: 'post',
       url: 'http://localhost:4009/v1/getorders',

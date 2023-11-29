@@ -1,5 +1,5 @@
 // library imports
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 // component imports
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -12,7 +12,7 @@ import { removeItems } from '../../redux/slices/cartSlice';
 import './deleteProduct.css';
 
 const DeleteProduct = ({ id, onClose, onDelete, item }) => {
-  console.log('🚀 ~ file: deleteProduct.js:15 ~ DeleteProduct ~ item id:', item?.product?._id)
+  const { token } = useSelector((state) => state.authReducer)
   // console.log('id', id);
   const dispatch = useDispatch();
   const handleClose = () => {
@@ -54,7 +54,7 @@ const DeleteProduct = ({ id, onClose, onDelete, item }) => {
               variant="primary"
               onClick={() => {
                 onDelete(id);
-                id ? dispatch(deleteProduct(id)).then(() => dispatch(getProducts())) : dispatch(removeItems(item));
+                id ? dispatch(deleteProduct({ id, token })).then(() => dispatch(getProducts())) : dispatch(removeItems(item));
               }}
             >
               Delete

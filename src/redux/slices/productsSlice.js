@@ -96,10 +96,14 @@ export const addBulkProducts = createAsyncThunk('addBulkProducts', async (data, 
 export const deleteProduct = createAsyncThunk(
   'deleteProduct',
   async (data, { rejectWithValue }) => {
+    console.log('delete id => ', data);
     try {
       const response = await axios({
         method: 'delete',
-        url: `http://localhost:4009/v1/product/${data}`,
+        url: `http://localhost:4009/v1/product/${data?.id}`,
+        headers: {
+          Authorization: `Bearer ${data.token}`
+        }
       });
       // Success Notification
       notification.success({

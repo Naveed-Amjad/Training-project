@@ -16,10 +16,7 @@ import {
 // style imports
 import ArrowLeft from '../../assets/ArrowLeft.svg';
 import CloudArrow from '../../assets/CloudArrow.svg';
-import image1 from '../../assets/image1.png';
-import image2 from '../../assets/image2.png';
-import image3 from '../../assets/image3.png';
-import image4 from '../../assets/image4.png';
+// style imports
 import './editProduct.css';
 // import { Button } from 'react-bootstrap';
 
